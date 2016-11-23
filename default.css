@@ -1,0 +1,150 @@
+body {
+  background-color: #f1f1f1;
+  margin: 0;
+}
+
+#logo #search #searchbutton #searchbar {
+  display: inline-block;
+}
+
+#header {
+  background-color: #fff;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-color: #ccc;
+  margin-bottom: 10px;
+  height: 52px;
+  width: 100%;
+}
+
+#logo {
+  position: absolute;
+  margin-left: 5%;
+  margin-top: 10px;
+  height: 31px;
+  width: 79px;
+}
+
+#search {
+  margin-left: 18%;
+}
+
+#searchbar:focus {
+  outline: none;
+  border-width: 2px;
+  border-color: #1c62b9;
+}
+
+#searchbar {
+  position: relative;
+  font-weight: 300;
+  font-size: 16px;
+  margin-top: 12px;
+  height: 22px;
+  width: 45vw;
+}
+
+#searchbutton:hover {
+  cursor: pointer;
+  background-color: #f0f0f0;
+}
+
+#searchbutton {
+  position: absolute;
+  background-color: #f8f8f8;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #ccc;
+  margin-top: 12px;
+  height: 28px;
+  width: 65px;
+}
+
+#searchimg {
+  width: 22px;
+}
+
+#videoblock {
+  background-color: #fff;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #ccc;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 20px;
+  padding-left: 15px;
+  padding-right: 15px;
+  height: auto;
+  width: 800px;
+}
+
+#videodetails {
+  position: relative;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  height: 120px;
+  width: 100%;
+}
+
+#videotitle,
+#videochannel,
+#videoviews,
+#videodesc {
+  position: absolute;
+  padding-left: 29%;
+}
+
+#videoimg {
+  z-index: 2;
+  position: absolute;
+  height: 120px;
+  width: 220px;
+}
+
+#videotitle {
+  font-size: 19px;
+  font-weight: 200;
+  top: -27px;
+}
+
+#videochannel {
+  color: #595959;
+  font-size: 14px;
+  font-weight: 100;
+  top: 10px;
+}
+
+#videoviews {
+  color: #595959;
+  font-size: 14px;
+  font-weight: 100;
+  top: 29px;
+}
+
+#videodesc {
+  color: #595959;
+  font-size: 14px;
+  font-weight: 100;
+  word-wrap: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  top: 50px;
+  width: 550px;
+  line-height: 1em;
+  max-height: 3em;
+}
+
+#invalidsearch {
+  background-color: #fff;
+  font-size: 15px;
+  text-align: center;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #ccc;
+  margin-left: auto;
+  margin-right: auto;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  height: 20px;
+  width: 50vw;
+}
