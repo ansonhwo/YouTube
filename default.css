@@ -236,3 +236,44 @@ body {
   padding-top: 10px;
   width: 97%;
 }
+
+#commentbox {
+  position: relative;
+  background-color: #fff;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #e2e2e2;
+  margin-left: auto;
+  margin-right: auto;
+  padding-bottom: 15px;
+  width: 80vw;
+  min-width: 834px;
+  height: auto;
+}
+
+#commentbox .header {
+  font-weight: 300;
+  margin-top: 15px;
+  margin-left: 15px;
+  margin-bottom: 12px;
+}
+
+#commentbox .wrap {
+  padding-left: 15px;
+}
+
+#commentbox .icon {
+  position: relative;
+  height: 48px;
+  width: 48px;
+}
+
+#commentbox .input {
+  position: absolute;
+  resize: none;
+  font-size: 14px;
+  left: 80px;
+  bottom: 23px;
+  width: 88%;
+  height: 36px;
+}
