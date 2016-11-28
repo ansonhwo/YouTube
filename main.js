@@ -2,6 +2,7 @@ var videos = [
 {
   title: "A Message from President-Elect Donald J. Trump",
   channel: "Transition 2017",
+  channelicon: "https://yt3.ggpht.com/-CmoaPOAkgk8/AAAAAAAAAAI/AAAAAAAAAAA/RCGcK9m4sHo/s48-c-k-no-mo-rj-c0xffffff/photo.jpg",
   description: "The President-elect shares an update on the Presidential Transition," +
     " an outline of some of his policy plans for the first 100 days, and his day one executive actions.",
   views: "1,341,158",
@@ -12,6 +13,7 @@ var videos = [
 {
   title: "Cars 3 Official US Teaser Trailer",
   channel: "Disney-Pixar",
+  channelicon: "https://yt3.ggpht.com/-CmoaPOAkgk8/AAAAAAAAAAI/AAAAAAAAAAA/RCGcK9m4sHo/s48-c-k-no-mo-rj-c0xffffff/photo.jpg",
   description: "From this moment, everything will change.\n\nDisney/Pixar's Cars 3 opens in US theatres" +
     " in 3D June 16, 2017.\n\nBlindsided by a new generation of blazing-fast races, the legendary Lightning McQueen (voice of Owen" +
     " Wilson) is suddenly pushed out of the sport he loves. To get back in the game, he will need the help of" +
@@ -25,6 +27,7 @@ var videos = [
 {
   title: "Flip Edition | Dude Perfect",
   channel: "Dude Perfect",
+  channelicon: "https://yt3.ggpht.com/-CmoaPOAkgk8/AAAAAAAAAAI/AAAAAAAAAAA/RCGcK9m4sHo/s48-c-k-no-mo-rj-c0xffffff/photo.jpg",
   description: "It's time to flip some stuff!\nThanks to Fantasitc Gymnastics by Hasbro Gaming for sponsoring" +
     " this video! Go to http://bit.ly/FantasticGymnasticsDP to get Fantastic Gymnastics for yourself!",
   views: "4,460,870",
@@ -35,6 +38,7 @@ var videos = [
 {
   title: "Billy on the Street: DEATH ROGEN! With Seth Rogen",
   channel: "billyonthestreettv",
+  channelicon: "https://yt3.ggpht.com/-CmoaPOAkgk8/AAAAAAAAAAI/AAAAAAAAAAA/RCGcK9m4sHo/s48-c-k-no-mo-rj-c0xffffff/photo.jpg",
   description: "New from Billy on the Street! Watch Billy hit the street with SETH ROGEN in disguise, tell" +
     " people that Seth has died and get their reactions! We call this DEATH ROGEN. Watch full episodes of Billy on the Street Tuesdays at 10:30/9:30c on @TruTV!",
   views: "364,533",
@@ -45,6 +49,7 @@ var videos = [
 {
   title: "Bullets vs Propeller in Slow Motion - The Slow Mo Guys",
   channel: "The Slow Mo Guys",
+  channelicon: "https://yt3.ggpht.com/-CmoaPOAkgk8/AAAAAAAAAAI/AAAAAAAAAAA/RCGcK9m4sHo/s48-c-k-no-mo-rj-c0xffffff/photo.jpg",
   description: "Gary and Dan venture out to the desert to film some bullets. Make sure you watch in HD for maximum bullet" +
     " shockwave action!\nCheers to EA for sponsoring this video. Check out the game at http://www.battlefield.com\n" +
     "Follow Gav on Twitter - https://twitter.com/GavinFree\nFollow Dan on Twitter - https://twitter.com/DanielGruchy",
@@ -56,6 +61,7 @@ var videos = [
 {
   title: 'The Voice 2016 Billy Gilman - Top 11: "All I Ask"',
   channel: "The Voice",
+  channelicon: "https://yt3.ggpht.com/-CmoaPOAkgk8/AAAAAAAAAAI/AAAAAAAAAAA/RCGcK9m4sHo/s48-c-k-no-mo-rj-c0xffffff/photo.jpg",
   description: "Billy Gilman showcases his vocal talent with a powerful rendition of 'All I Ask' by Adele.\n\n" +
     "NBC's The Voice follows the strongest vocalists from across the country and invites them to compete in" +
     " this season's blockbuster vocal competition.",
@@ -67,6 +73,7 @@ var videos = [
 {
   title: "The iPhone 8 Will Be Incredible!",
   channel: "EverythingApplePro",
+  channelicon: "https://yt3.ggpht.com/-CmoaPOAkgk8/AAAAAAAAAAI/AAAAAAAAAAA/RCGcK9m4sHo/s48-c-k-no-mo-rj-c0xffffff/photo.jpg",
   description: "iPhone 8 & 8 Plus Rumors & Leaks Have Begun! New Features To Expect & Rumor Roundup With Sources!",
   views: "693,167",
   comments: [],
@@ -76,6 +83,7 @@ var videos = [
 {
   title: "10 Disney Crossover Easter Eggs That You've Never Seen",
   channel: "Screen Rant",
+  channelicon: "https://yt3.ggpht.com/-CmoaPOAkgk8/AAAAAAAAAAI/AAAAAAAAAAA/RCGcK9m4sHo/s48-c-k-no-mo-rj-c0xffffff/photo.jpg",
   description: "Animated movies are a right of passage for most children, and nobody does them better than Disney. Every child remembers watching Snow White and" +
     " The Little Mermaid for the first time, and most of us are still heading to theatres whenever a new Pixar film comes out. But we don't always catch the Easter" +
     " eggs left there by mischievious animators, or the cameos that some Disney characters make in movies that aren't their own.",
@@ -84,7 +92,6 @@ var videos = [
   thumbnail: "https://i.ytimg.com/vi/KBTwUOsO4d0/hqdefault.jpg?custom=true&w=196&h=110&stc=true&jpg444=true&jpgq=90&sp=68&sigh=Ue_RmuQ0uggRmpbxvxQAiC-w060",
   embed: 'https://www.youtube.com/embed/KBTwUOsO4d0?autoplay=1'
 }];
-var $searchBar = document.getElementById('searchbar');
 
 
 // Deletes all of the children associated with the provided element ID.
@@ -163,11 +170,65 @@ function buildVideoList(_elements) {
 }
 
 
+// Builds the video viewing area containing video related details
+function buildViewingArea(_embed) {
+  var $videos = document.getElementById('videos');
+  var $viewingArea = newElement('div', 'id', 'viewingarea');
+  var $embed = newElement('div', 'id', 'embed');
+  var $showVideo = newElement('iframe', 'width', '560px');
+
+  $showVideo.setAttribute('height', '480px');
+  $showVideo.setAttribute('width', '854px');
+  $showVideo.setAttribute('src', _embed);
+  $showVideo.setAttribute('frameborder', 0);
+  $showVideo.setAttribute('allowfullscreen', '');
+  $showVideo.setAttribute('id', 'uservideo');
+  $videos.appendChild($viewingArea);
+  $viewingArea.appendChild($embed);
+  $embed.appendChild($showVideo);
+
+  var $videoinfo = newElement('div', 'id', 'videoinfo');
+  var $titlebox = newElement('div', 'id', 'titlebox');
+  var $title = newElement('h2', 'class', 'title');
+  var $channelbox = newElement('div', 'id', 'channelbox');
+  var $channel = newElement('p', 'class', 'channel');
+  var $channelicon = newElement('img', 'class', 'videoicon');
+  var $description = newElement('p', 'class', 'desc');
+  var $views = newElement('p', 'class', 'views');
+  var title, channel, channelicon, description, views;
+
+  $videos.appendChild($videoinfo);
+  for (var index = 0; index < videos.length; index++) {
+    if (videos[index].embed === _embed) {
+      title = videos[index].title;
+      channel = videos[index].channel;
+      channelicon = videos[index].channelicon;
+      description = videos[index].description;
+      views = videos[index].views;
+      break;
+    }
+  }
+  $title.textContent = title;
+  $channel.textContent = channel;
+  $channelicon.setAttribute('src', channelicon);
+  $description.textContent = description;
+  $views.textContent = views + " views";
+
+  $videoinfo.appendChild($titlebox);
+  $titlebox.appendChild($title);
+  $videoinfo.appendChild($channelbox);
+  $channelbox.appendChild($channelicon);
+  $channelbox.appendChild($channel);
+  $videoinfo.appendChild($views);
+  $videoinfo.appendChild($description);
+}
+
+
 document.addEventListener('submit', function(_event) {
 
   _event.preventDefault();
 
-  var query = $searchBar.value;
+  var query = document.getElementById('searchbar').value;
 
   if (query.trim()) {
     query = query.trim();
@@ -196,26 +257,14 @@ document.addEventListener('submit', function(_event) {
 
 document.addEventListener('click', function(_event) {
   var $target = _event.target;
-  //console.log("target: " + $target + "\n\ttarget class: " + $target.class + "\n\ttarget id: " + $target.id);
   if ($target.className === 'videoimg' || $target.className === 'videotitle') {
     _event.preventDefault();
 
     var $videos = document.getElementById('videos');
     var embedURL = $target.getAttribute("data-embed");
-    var $viewingArea = newElement('div', 'id', 'viewingarea');
-    var $embed = newElement('div', 'id', 'embed');
-    var $showVideo = newElement('iframe', 'width', '560px');
 
     deleteChild($videos);
 
-    $showVideo.setAttribute('height', '480px');
-    $showVideo.setAttribute('width', '854px');
-    $showVideo.setAttribute('src', embedURL);
-    $showVideo.setAttribute('frameborder', 0);
-    $showVideo.setAttribute('allowfullscreen', '');
-    $showVideo.setAttribute('id', 'uservideo');
-    $videos.appendChild($viewingArea);
-    $viewingArea.appendChild($embed);
-    $embed.appendChild($showVideo);
+    buildViewingArea(embedURL);
   }
 });
