@@ -239,6 +239,16 @@ function buildViewingArea(_embed) {
   $videoinfo.appendChild($description);
 
   // Add comments area
+  addCommentsArea(index);
+
+  // Associated user comments area
+  userCommentsArea(index);
+}
+
+
+// Helper function that creates the Add Comment section
+function addCommentsArea(_video) {
+  var $videos = document.getElementById('videos');
   var $addComments = newElement('div', 'id', 'addcomments');
   var $commentWrapper = newElement('div', 'class', 'wrap');
   var $commentHeader = newElement('h4', 'class', 'header');
@@ -264,14 +274,11 @@ function buildViewingArea(_embed) {
   $addComments.appendChild($buttonwrap);
   $submit.textContent = "Comment";
   $buttonwrap.appendChild($submit);
-
-  // Associated user comments area
-  buildComments(index);
 }
 
 
-// Helper function that builds the user comments area
-function buildComments(_video) {
+// Helper function that creates the User Comments area
+function userCommentsArea(_video) {
   var $videos = document.getElementById('videos');
   var $commentHeader = document.querySelector('#addcomments .header');
   var numComments = videos[_video].comments.length;
@@ -324,7 +331,7 @@ function addComment(_video, _user) {
     var comment = new Comment(users[_user].name, users[_user].icon, 40, input);
     videos[_video].comments.unshift(comment);
     $input.value = '';
-    buildComments(_video);
+    userCommentsArea(_video);
   }
 }
 
