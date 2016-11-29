@@ -108,12 +108,7 @@ var users = [{
   name: "User4",
   icon: "https://cdn0.iconfinder.com/data/icons/PRACTIKA/256/user.png"
 }];
-var currentUser = 0;
-
-//var comment1 = new Comment(users[2].name, users[2].icon, 30, "As a die heart fan of Adele, I got no idea why Adele doesn't want to put this as her publish single.");
-//var comment2 = new Comment(users[0].name, users[0].icon, 45, "HE'S UNDOUBTEDLY THE VOICE OF 2016!!!!");
-//videos[0].comments.push(comment1);
-//videos[0].comments.push(comment2);
+var currentUser = 1;
 
 
 // Deletes all of the children associated with the provided element ID.
@@ -279,35 +274,57 @@ function buildViewingArea(_embed) {
 function buildComments(_video) {
   var $videos = document.getElementById('videos');
   var $commentHeader = document.querySelector('#addcomments .header');
-  var $userComments = newElement('div', 'id', 'usercomments');
-  var $exists = document.getElementById('usercomments');
+  var numComments = videos[_video].comments.length;
 
-  if ($exists) {
-    deleteChild($userComments);
-  }
-  else {
-    $videos.appendChild($userComments);
-  }
+  $commentHeader.textContent = "COMMENTS • " + numComments;
 
-  $commentHeader.textContent = "COMMENTS • " + videos[_video].comments.length;
+  if (numComments > 0) {
+    var $exists = document.getElementById('usercomments');
 
-  if (videos[_video].comments.length > 0) {
-    $userComments.style.visibility = 'visible';
-    for (var index = 0; index > videos[_video].comments.length; index++) {
-      var $commentWrap = newElement('div', 'class', 'wrap');
-      var $icon = newElement('img', 'src', videos[_video].comments[index].icon);
-      var $comment = newElement('p', 'class', 'comment');
-      var $author = newElement('span', 'class', 'author');
-      $icon.setAttribute('class', 'icon');
-      $comment.textContent = videos[_video].comments[index].comment;
-      $userComments.appendChild($author);
-      $author.appendChild($icon);
-      $userComments.appendChild($commentWrap);
-      $commentWrap.appendChild($comment);
+    if ($exists) {
+      deleteChild($exists);
+      populate(_video, $exists, numComments);
+    }
+    else {
+      var $userComments = newElement('div', 'id', 'usercomments');
+      $videos.appendChild($userComments);
+      populate(_video, $userComments, numComments);
     }
   }
-  else {
-    $userComments.style.visibility = 'hidden';
+}
+
+
+// Helper function that adds comments to user comment area
+function populate(_video, _element, _numcomments) {
+  for (var index = 0; index < _numcomments; index++) {
+    var $commentWrap = newElement('div', 'class', 'wrap');
+    var $commentBlock = newElement('div', 'class', 'block');
+    var $icon = newElement('img', 'src', videos[_video].comments[index].icon);
+    var $author = newElement('span', 'class', 'author');
+    var $user = newElement('p', 'class', 'user');
+    var $comment = newElement('p', 'class', 'comment');
+    $icon.setAttribute('class', 'icon');
+    _element.appendChild($commentBlock);
+    $commentBlock.appendChild($author);
+    $author.appendChild($icon);
+    $commentBlock.appendChild($commentWrap);
+    $user.textContent = videos[_video].comments[index].user;
+    $commentWrap.appendChild($user);
+    $comment.textContent = videos[_video].comments[index].comment;
+    $commentWrap.appendChild($comment);
+  }
+}
+
+
+// Adds a new comment to the current video
+function addComment(_video, _user) {
+  var $input = document.querySelector('#addcomments .input');
+  var input = $input.value.trim();
+  if (input) {
+    var comment = new Comment(users[_user].name, users[_user].icon, 40, input);
+    videos[_video].comments.unshift(comment);
+    $input.value = '';
+    buildComments(_video);
   }
 }
 
@@ -327,18 +344,6 @@ function findVideo(_embed) {
     if (videos[index].embed === _embed) {
       return index;
     }
-  }
-}
-
-
-// Adds a new comment to the current video
-function addComment(_video, _user) {
-  var input = document.querySelector('#addcomments .input').value.trim();
-  if (input) {
-    console.log('name: ' + users[_user].name + '\nicon: ' + users[_user].icon + "\ninput: " + input);
-    var comment = new Comment(users[_user].name, users[_user].icon, 40, input);
-    videos[_video].comments.unshift(comment);
-    buildComments(_video);
   }
 }
 
