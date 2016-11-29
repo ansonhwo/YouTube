@@ -188,6 +188,7 @@ function buildVideoList(_elements) {
 
 // Builds the video viewing area containing video related details
 function buildViewingArea(_embed) {
+  // Embedded video area
   var $videos = document.getElementById('videos');
   var $viewingArea = newElement('div', 'id', 'viewingarea');
   var $embed = newElement('div', 'id', 'embed');
@@ -203,6 +204,7 @@ function buildViewingArea(_embed) {
   $viewingArea.appendChild($embed);
   $embed.appendChild($showVideo);
 
+  // Video detail area
   var $videoinfo = newElement('div', 'id', 'videoinfo');
   var $titlebox = newElement('div', 'id', 'titlebox');
   var $title = newElement('h2', 'class', 'title');
@@ -235,26 +237,56 @@ function buildViewingArea(_embed) {
   $videoinfo.appendChild($views);
   $videoinfo.appendChild($description);
 
-  var $commentBox = newElement('div', 'id', 'commentbox');
+  // Add comments area
+  var $addComments = newElement('div', 'id', 'addcomments');
   var $commentWrapper = newElement('div', 'class', 'wrap');
   var $commentHeader = newElement('h4', 'class', 'header');
   var $comment = newElement('form', '', '');
   var $commentInput = newElement('textarea', 'class', 'input');
   var $userIcon = newElement('img', 'src', users[1].icon);
-  var $div = newElement('div', '', '');
 
   $comment.setAttribute('action','');
-  $commentHeader.textContent = "COMMENTS • " + videos[index].comments.length;
+  //$commentHeader.textContent = "COMMENTS • " + videos[index].comments.length;
   $commentInput.setAttribute('placeholder', 'Add a public comment...');
   $commentInput.setAttribute('type', 'text');
   $commentInput.setAttribute('name', 'comment');
   $userIcon.setAttribute('class', 'icon');
-  $videos.appendChild($commentBox);
-  $commentBox.appendChild($commentHeader);
-  $commentBox.appendChild($commentWrapper);
+  $videos.appendChild($addComments);
+  $addComments.appendChild($commentHeader);
+  $addComments.appendChild($commentWrapper);
   $commentWrapper.appendChild($userIcon);
   $commentWrapper.appendChild($comment);
   $comment.appendChild($commentInput);
+
+  // Associated user comments area
+  buildComments(index);
+}
+
+
+// Helper function that builds the user comments area
+function buildComments(_video) {
+  //console.log('building comments for index #' + _index);
+  var $videos = document.getElementById('videos');
+  var $commentHeader = document.querySelector('#addcomments .header');
+  var $userComments = newElement('div', 'id', 'usercomments');
+  var comment1 = new Comment(users[2].name, users[2].icon, 30, "As a die heart fan of Adele, I got no idea why Adele doesn't want to put this as her publish single.");
+  var comment2 = new Comment(users[0].name, users[0].icon, 45, "HE'S UNDOUBTEDLY THE VOICE OF 2016!!!!");
+  videos[0].comments.push(comment1);
+  videos[0].comments.push(comment2);
+  $commentHeader.textContent = "COMMENTS • " + videos[_video].comments.length;
+  $videos.appendChild($userComments);
+
+  for (var index = 0; index < videos[_video].comments.length; index++) {
+    var $commentWrap = newElement('div', 'class', 'wrap');
+    var $icon = newElement('img', 'src', videos[_video].comments[index].icon);
+    var $comment = newElement('p', 'class', 'comment');
+    $icon.setAttribute('class', 'icon');
+    $comment.textContent = videos[_video].comments[index].comment;
+    console.log('index: ' + index + ', img --> ' + videos[_video].comments[index].icon);
+    $userComments.appendChild($commentWrap);
+    $commentWrap.appendChild($icon);
+    $commentWrap.appendChild($comment);
+  }
 }
 
 
@@ -278,10 +310,10 @@ function findVideo(_embed) {
 
 
 // Adds a new comment to the current video
-function addComment(_video, _user) {
+//function addComment(_index, _user) {
   //var comment = new Comment(_user.name, _user.icon, 2000)
   //videos[_target].comments.push()
-}
+//}
 
 
 document.addEventListener('submit', function(_event) {
