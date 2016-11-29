@@ -253,7 +253,7 @@ body {
 }
 
 #addcomments .header {
-  font-weight: 300;
+  font-weight: 200;
   margin-top: 15px;
   margin-left: 15px;
   margin-bottom: 12px;
@@ -264,21 +264,60 @@ body {
   padding-left: 15px;
 }
 
-#addcomments .icon {
-  position: relative;
+#addcomments .author {
+  display: inline-block;
+  vertical-align: top;
+  margin-left: 10px;
   height: 48px;
   width: 48px;
 }
 
+#addcomments .icon {
+  height: 48px;
+  width: 48px;
+}
+
+#addcomments .wrap {
+  display: inline-block;
+  vertical-align: top;
+  width: 90%;
+}
+
 #addcomments .input {
-  position: absolute;
   outline-width: thin;
   resize: none;
   font-size: 14px;
   left: 80px;
   bottom: 23px;
-  width: 88%;
-  height: 36px;
+  width: 100%;
+  height: 40px;
+}
+
+#addcomments .buttonwrap {
+  margin-top: 5px;
+  margin-bottom: -5px;
+}
+
+#addcomments .submitcomment:hover {
+  cursor: pointer;
+}
+
+#addcomments .submitcomment:active {
+  background-color: #165fc6;
+}
+
+#addcomments .submitcomment {
+  background-color: #167ac6;
+  outline: 0;
+  color: #fff;
+  font-size: 11px;
+  border-style: solid;
+  border-radius: 5px;
+  border-width: 1px;
+  border-color: #e2e2e2;
+  margin-left: 90%;
+  height: 35px;
+  width: 80px;
 }
 
 #usercomments {
@@ -289,8 +328,9 @@ body {
   margin-right: auto;
   margin-left: auto;
   margin-bottom: 15px;
-  padding-top: 5px;
+  padding-top: 18px;
   width: 80vw;
+  height: auto;
 }
 
 #usercomments .wrap {
@@ -300,13 +340,23 @@ body {
 
 #usercomments .comment {
   position: relative;
-  font-weight: 400;
+  font-weight: 300;
   margin-top: 10px;
-  padding-left: 50px;
+  padding-left: 55px;
+  width: 90%;
 }
 
 #usercomments .icon {
   position: absolute;
   height: 48px;
   width: 48px;
+}
+
+#usercomments .user {
+  color: #128ee9;
+  font-size: 16px;
+  margin-top: 0;
+  margin-left: 55px;
+  margin-bottom: 0;
+  width: 40%;
 }

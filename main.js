@@ -108,6 +108,12 @@ var users = [{
   name: "User4",
   icon: "https://cdn0.iconfinder.com/data/icons/PRACTIKA/256/user.png"
 }];
+var currentUser = 0;
+
+//var comment1 = new Comment(users[2].name, users[2].icon, 30, "As a die heart fan of Adele, I got no idea why Adele doesn't want to put this as her publish single.");
+//var comment2 = new Comment(users[0].name, users[0].icon, 45, "HE'S UNDOUBTEDLY THE VOICE OF 2016!!!!");
+//videos[0].comments.push(comment1);
+//videos[0].comments.push(comment2);
 
 
 // Deletes all of the children associated with the provided element ID.
@@ -243,20 +249,26 @@ function buildViewingArea(_embed) {
   var $commentHeader = newElement('h4', 'class', 'header');
   var $comment = newElement('form', '', '');
   var $commentInput = newElement('textarea', 'class', 'input');
-  var $userIcon = newElement('img', 'src', users[1].icon);
+  var $author = newElement('span', 'class', 'author');
+  var $userIcon = newElement('img', 'src', users[currentUser].icon);
+  var $buttonwrap = newElement('div', 'class', 'buttonwrap');
+  var $submit = newElement('button', 'class', 'submitcomment');
 
   $comment.setAttribute('action','');
-  //$commentHeader.textContent = "COMMENTS • " + videos[index].comments.length;
   $commentInput.setAttribute('placeholder', 'Add a public comment...');
   $commentInput.setAttribute('type', 'text');
   $commentInput.setAttribute('name', 'comment');
   $userIcon.setAttribute('class', 'icon');
   $videos.appendChild($addComments);
   $addComments.appendChild($commentHeader);
+  $addComments.appendChild($author);
+  $author.appendChild($userIcon);
   $addComments.appendChild($commentWrapper);
-  $commentWrapper.appendChild($userIcon);
   $commentWrapper.appendChild($comment);
   $comment.appendChild($commentInput);
+  $addComments.appendChild($buttonwrap);
+  $submit.textContent = "Comment";
+  $buttonwrap.appendChild($submit);
 
   // Associated user comments area
   buildComments(index);
@@ -265,27 +277,37 @@ function buildViewingArea(_embed) {
 
 // Helper function that builds the user comments area
 function buildComments(_video) {
-  //console.log('building comments for index #' + _index);
   var $videos = document.getElementById('videos');
   var $commentHeader = document.querySelector('#addcomments .header');
   var $userComments = newElement('div', 'id', 'usercomments');
-  var comment1 = new Comment(users[2].name, users[2].icon, 30, "As a die heart fan of Adele, I got no idea why Adele doesn't want to put this as her publish single.");
-  var comment2 = new Comment(users[0].name, users[0].icon, 45, "HE'S UNDOUBTEDLY THE VOICE OF 2016!!!!");
-  videos[0].comments.push(comment1);
-  videos[0].comments.push(comment2);
-  $commentHeader.textContent = "COMMENTS • " + videos[_video].comments.length;
-  $videos.appendChild($userComments);
+  var $exists = document.getElementById('usercomments');
 
-  for (var index = 0; index < videos[_video].comments.length; index++) {
-    var $commentWrap = newElement('div', 'class', 'wrap');
-    var $icon = newElement('img', 'src', videos[_video].comments[index].icon);
-    var $comment = newElement('p', 'class', 'comment');
-    $icon.setAttribute('class', 'icon');
-    $comment.textContent = videos[_video].comments[index].comment;
-    console.log('index: ' + index + ', img --> ' + videos[_video].comments[index].icon);
-    $userComments.appendChild($commentWrap);
-    $commentWrap.appendChild($icon);
-    $commentWrap.appendChild($comment);
+  if ($exists) {
+    deleteChild($userComments);
+  }
+  else {
+    $videos.appendChild($userComments);
+  }
+
+  $commentHeader.textContent = "COMMENTS • " + videos[_video].comments.length;
+
+  if (videos[_video].comments.length > 0) {
+    $userComments.style.visibility = 'visible';
+    for (var index = 0; index > videos[_video].comments.length; index++) {
+      var $commentWrap = newElement('div', 'class', 'wrap');
+      var $icon = newElement('img', 'src', videos[_video].comments[index].icon);
+      var $comment = newElement('p', 'class', 'comment');
+      var $author = newElement('span', 'class', 'author');
+      $icon.setAttribute('class', 'icon');
+      $comment.textContent = videos[_video].comments[index].comment;
+      $userComments.appendChild($author);
+      $author.appendChild($icon);
+      $userComments.appendChild($commentWrap);
+      $commentWrap.appendChild($comment);
+    }
+  }
+  else {
+    $userComments.style.visibility = 'hidden';
   }
 }
 
@@ -310,10 +332,15 @@ function findVideo(_embed) {
 
 
 // Adds a new comment to the current video
-//function addComment(_index, _user) {
-  //var comment = new Comment(_user.name, _user.icon, 2000)
-  //videos[_target].comments.push()
-//}
+function addComment(_video, _user) {
+  var input = document.querySelector('#addcomments .input').value.trim();
+  if (input) {
+    console.log('name: ' + users[_user].name + '\nicon: ' + users[_user].icon + "\ninput: " + input);
+    var comment = new Comment(users[_user].name, users[_user].icon, 40, input);
+    videos[_video].comments.unshift(comment);
+    buildComments(_video);
+  }
+}
 
 
 document.addEventListener('submit', function(_event) {
@@ -349,14 +376,19 @@ document.addEventListener('submit', function(_event) {
 
 document.addEventListener('click', function(_event) {
   var $target = _event.target;
+  var embedURL;
   if ($target.className === 'videoimg' || $target.className === 'videotitle') {
     _event.preventDefault();
 
     var $videos = document.getElementById('videos');
-    var embedURL = $target.getAttribute("data-embed");
+    embedURL = $target.getAttribute("data-embed");
 
     deleteChild($videos);
 
     buildViewingArea(embedURL);
+  }
+  if ($target.className === 'submitcomment') {
+    embedURL = document.getElementById('uservideo').getAttribute('src');
+    addComment(findVideo(embedURL), currentUser);
   }
 });
