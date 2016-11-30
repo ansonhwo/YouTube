@@ -109,35 +109,43 @@ var users = [{
   icon: "https://cdn0.iconfinder.com/data/icons/PRACTIKA/256/user.png"
 }];
 var currentUser = 1;
+var CE = createElement;
 
 
 // Deletes all of the children associated with the provided element ID.
-function deleteChild(_element) {
-  while (_element.hasChildNodes()) {
-    _element.removeChild(_element.lastChild);
+function deleteChild(element) {
+  while (element.hasChildNodes()) {
+    element.removeChild(element.lastChild);
   }
 }
 
 
-// Helper function to create elements with a specified id/class
-function newElement(_type, _attribute1, _attribute2) {
-  if (!_type) return;
-  var $element = document.createElement(_type);
-
-  if (!_attribute1 || !_attribute2) return $element;
-  $element.setAttribute(_attribute1, _attribute2);
-
-  return $element;
+// Create elements with the given attributes & child nodes
+function createElement(tagName, attributes, children) {
+  var element = document.createElement(tagName);
+  for (var key in attributes) {
+    element.setAttribute(key, attributes[key]);
+  }
+  for (var index = 0; index < children.length; index++) {
+    var child = children[index];
+    if (child instanceof Element) {
+      element.appendChild(child);
+    }
+    else {
+      element.appendChild(document.createTextNode(child));
+    }
+  }
+  return element;
 }
 
 
 // Return an array of matched video objects based on user query.
-function findMatch(_query) {
+function findMatch(query) {
   var videoList = [];
 
   for (var index = 0; index < videos.length; index++) {
     var itemText = videos[index].description + videos[index].title + videos[index].channel;
-    if (itemText.toLowerCase().includes(_query.toLowerCase())) {
+    if (itemText.toLowerCase().includes(query.toLowerCase())) {
       videoList.push(videos[index]);
     }
   }
@@ -147,227 +155,192 @@ function findMatch(_query) {
 
 
 // Builds video list with videos that match the user's search query
-function buildVideoList(_elements) {
+function buildVideoList(elements) {
   var $videoList = document.getElementById('videos');
-  var $videoBlock = newElement('div', 'id', 'videoblock');
+  var $videoBlock = CE('div', {'id': 'videoblock'}, []);
 
   $videoList.appendChild($videoBlock);
 
-  for (var index = 0; index < _elements.length; index++) {
-    var $videoDetails = newElement('div', 'id', 'videodetails');
-    var $videoImage = newElement('img', 'class', 'videoimg');
-    var $videoTitle = newElement('h4', 'class', 'videotitle');
-    var $videoChannel = newElement('p', 'class', 'videochannel');
-    var $videoViews = newElement('p', 'class', 'videoviews');
-    var $videoDesc = newElement('p', 'class', 'videodesc');
-    var $link1 = newElement('a', 'href', '#');
-    var $link2 = newElement('a', 'href', '#');
-
+  for (var index = 0; index < elements.length; index++) {
+    var $videoDetails =
+      CE('div', {'id': 'videodetails'}, [
+        CE('a', {'href': '#'}, [
+          CE('img', {'class': 'videoimg', 'src': elements[index].thumbnail, 'data-embed': elements[index].embed}, [])
+        ]),
+        CE('a', {'href': '#'}, [
+          CE('h4', {'class': 'videotitle', 'data-embed': elements[index].embed}, [elements[index].title])
+        ]),
+        CE('p', {'class': 'videochannel'}, [elements[index].channel]),
+        CE('p', {'class': 'videoviews'}, [elements[index].views + ' views']),
+        CE('p', {'class': 'videodesc'}, [elements[index].description])
+      ]);
     $videoBlock.appendChild($videoDetails);
-
-    $videoImage.setAttribute('src', _elements[index].thumbnail);
-    $videoImage.setAttribute('data-embed', _elements[index].embed);
-    $videoDetails.appendChild($link1);
-    $link1.appendChild($videoImage);
-
-    $videoTitle.textContent = _elements[index].title;
-    $videoTitle.setAttribute('data-embed', _elements[index].embed);
-    $videoDetails.appendChild($link2);
-    $link2.appendChild($videoTitle);
-
-    $videoChannel.textContent = _elements[index].channel;
-    $videoDetails.appendChild($videoChannel);
-
-    $videoViews.textContent = _elements[index].views + " views";
-    $videoDetails.appendChild($videoViews);
-
-    $videoDesc.textContent = _elements[index].description;
-    $videoDetails.appendChild($videoDesc);
   }
 }
 
 
 // Builds the video viewing area containing video related details
-function buildViewingArea(_embed) {
-  // Embedded video area
-  var $videos = document.getElementById('videos');
-  var $viewingArea = newElement('div', 'id', 'viewingarea');
-  var $embed = newElement('div', 'id', 'embed');
-  var $showVideo = newElement('iframe', 'width', '560px');
+function buildViewingArea(embed) {
+  buildVideoArea(embed);
 
-  $showVideo.setAttribute('height', '480px');
-  $showVideo.setAttribute('width', '854px');
-  $showVideo.setAttribute('src', _embed);
-  $showVideo.setAttribute('frameborder', 0);
-  $showVideo.setAttribute('allowfullscreen', '');
-  $showVideo.setAttribute('id', 'uservideo');
-  $videos.appendChild($viewingArea);
-  $viewingArea.appendChild($embed);
-  $embed.appendChild($showVideo);
+  buildVideoDetails(embed);
 
-  // Video detail area
-  var $videoinfo = newElement('div', 'id', 'videoinfo');
-  var $titlebox = newElement('div', 'id', 'titlebox');
-  var $title = newElement('h2', 'class', 'title');
-  var $channelbox = newElement('div', 'id', 'channelbox');
-  var $channel = newElement('p', 'class', 'channel');
-  var $channelicon = newElement('img', 'class', 'videoicon');
-  var $description = newElement('p', 'class', 'desc');
-  var $views = newElement('p', 'class', 'views');
-
-  $videos.appendChild($videoinfo);
-
-  var index = findVideo(_embed);
-  var title = videos[index].title;
-  var channel = videos[index].channel;
-  var channelicon = videos[index].channelicon;
-  var description = videos[index].description;
-  var views = videos[index].views;
-
-  $title.textContent = title;
-  $channel.textContent = channel;
-  $channelicon.setAttribute('src', channelicon);
-  $description.textContent = description;
-  $views.textContent = views + " views";
-
-  $videoinfo.appendChild($titlebox);
-  $titlebox.appendChild($title);
-  $videoinfo.appendChild($channelbox);
-  $channelbox.appendChild($channelicon);
-  $channelbox.appendChild($channel);
-  $videoinfo.appendChild($views);
-  $videoinfo.appendChild($description);
-
-  // Add comments area
   addCommentsArea();
 
-  // Associated user comments area
+  var index = findVideo(embed);
   userCommentsArea(index);
 }
 
 
-// Helper function that creates the Add Comment section
-function addCommentsArea() {
+// Populate the Video Player area
+function buildVideoArea(embed) {
   var $videos = document.getElementById('videos');
-  var $addComments = newElement('div', 'id', 'addcomments');
-  var $commentWrapper = newElement('div', 'class', 'wrap');
-  var $commentHeader = newElement('h4', 'class', 'header');
-  var $comment = newElement('form', '', '');
-  var $commentInput = newElement('textarea', 'class', 'input');
-  var $author = newElement('span', 'class', 'author');
-  var $userIcon = newElement('img', 'src', users[currentUser].icon);
-  var $buttonwrap = newElement('div', 'class', 'buttonwrap');
-  var $cancel = newElement('button', 'class', 'cancelcomment');
-  var $submit = newElement('button', 'class', 'submitcomment');
+  var $viewingArea = CE('div', {'id': 'viewingarea'}, []);
+  $videos.appendChild($viewingArea);
 
-  $comment.setAttribute('action','');
-  $commentInput.setAttribute('placeholder', 'Add a public comment...');
-  $commentInput.setAttribute('type', 'text');
-  $commentInput.setAttribute('name', 'comment');
-  $userIcon.setAttribute('class', 'icon');
-  $videos.appendChild($addComments);
-  $addComments.appendChild($commentHeader);
-  $addComments.appendChild($author);
-  $author.appendChild($userIcon);
-  $addComments.appendChild($commentWrapper);
-  $commentWrapper.appendChild($comment);
-  $comment.appendChild($commentInput);
-  $commentWrapper.appendChild($buttonwrap);
-  $cancel.textContent = "Cancel";
-  $submit.textContent = "Comment";
-  $buttonwrap.appendChild($submit);
-  $buttonwrap.appendChild($cancel);
+  var $embed =
+    CE('div', {'id': 'embed'}, [
+      CE('iframe', {'id': 'uservideo', 'height': '480px', 'width': '854px', 'src': embed, 'frameborder': 0, 'allowfullscreen': ''}, [])
+    ]);
+  $viewingArea.appendChild($embed);
 }
 
 
-// Helper function that creates the User Comments area
-function userCommentsArea(_video) {
+// Populate the Video Details section
+function buildVideoDetails(embed) {
+  var $videos = document.getElementById('videos');
+  var index = findVideo(embed);
+  var $titlebox =
+    CE('div', {'id': 'titlebox'}, [
+      CE('h2', {'class': 'title'}, [videos[index].title])
+    ]);
+  var $channelbox =
+    CE('div', {'id': 'channelbox'}, [
+      CE('img', {'class': 'videoicon', 'src': videos[index].channelicon}, []),
+      CE('p', {'class': 'channel'}, [videos[index].channel])
+    ]);
+  var $videoinfo =
+    CE('div', {'id': 'videoinfo'}, [
+      $titlebox, $channelbox,
+      CE('p', {'class': 'views'}, [videos[index].views + ' views']),
+      CE('p', {'class': 'desc'}, [videos[index].description])
+  ]);
+
+  $videos.appendChild($videoinfo);
+}
+
+
+// Populate the Add Comments section
+function addCommentsArea() {
+  var $videos = document.getElementById('videos');
+  var $author =
+    CE('span', {'class': 'author'}, [
+      CE('img', {'class': 'icon', 'src': users[currentUser].icon}, [])
+    ]);
+  var $commentWrap =
+    CE('div', {'class': 'wrap'}, [
+      CE('form', {'action': ''}, [
+        CE('textarea', {'class': 'input', 'type': 'text', 'placeholder': 'Add a public comment...', 'name': 'comment'}, [])
+      ]),
+      CE('div', {'class': 'buttonwrap'}, [
+        CE('button', {'class': 'submitcomment'}, ['Comment']),
+        CE('button', {'class': 'cancelcomment'}, ['Cancel'])
+      ])
+    ]);
+  var $addComments = CE('div', {'id': 'addcomments'}, [
+    CE('h4', {'class': 'header'}, []),
+    $author,
+    $commentWrap
+  ]);
+
+  $videos.appendChild($addComments);
+}
+
+
+// Populate the User Comments section
+function userCommentsArea(index) {
   var $videos = document.getElementById('videos');
   var $commentHeader = document.querySelector('#addcomments .header');
-  var numComments = videos[_video].comments.length;
+  var numComments = videos[index].comments.length;
 
-  $commentHeader.textContent = "COMMENTS • " + numComments;
+  $commentHeader.textContent = 'COMMENTS • ' + numComments;
 
   if (numComments > 0) {
     var $exists = document.getElementById('usercomments');
 
     if ($exists) {
       deleteChild($exists);
-      populate(_video, $exists, numComments);
+      populate(index, $exists, numComments);
     }
     else {
-      var $userComments = newElement('div', 'id', 'usercomments');
+      var $userComments = CE('div', {'id': 'usercomments'}, []);
       $videos.appendChild($userComments);
-      populate(_video, $userComments, numComments);
+      populate(index, $userComments, numComments);
     }
   }
 }
 
 
 // Helper function that adds comments to user comment area
-function populate(_video, _element, _numcomments) {
-  for (var index = 0; index < _numcomments; index++) {
-    var $commentWrap = newElement('div', 'class', 'wrap');
-    var $commentBlock = newElement('div', 'class', 'block');
-    var $icon = newElement('img', 'src', videos[_video].comments[index].icon);
-    var $author = newElement('span', 'class', 'author');
-    var $user = newElement('p', 'class', 'user');
-    var $comment = newElement('p', 'class', 'comment');
-    $icon.setAttribute('class', 'icon');
-    _element.appendChild($commentBlock);
-    $commentBlock.appendChild($author);
-    $author.appendChild($icon);
-    $commentBlock.appendChild($commentWrap);
-    $user.textContent = videos[_video].comments[index].user;
-    $commentWrap.appendChild($user);
-    $comment.textContent = videos[_video].comments[index].comment;
-    $commentWrap.appendChild($comment);
+function populate(video, $element, numComments) {
+  for (var index = 0; index < numComments; index++) {
+    var $userComment = CE('div', {'class': 'block'}, [
+      CE('span', {'class': 'author'}, [
+        CE('img', {'class': 'icon', 'src': videos[video].comments[index].icon}, [])
+      ]),
+      CE('div', {'class': 'wrap'}, [
+        CE('p', {'class': 'user'}, [videos[video].comments[index].user]),
+        CE('p', {'class': 'comment'}, [videos[video].comments[index].comment])
+      ])
+    ]);
+
+    $element.appendChild($userComment);
   }
 }
 
 
 // Adds a new comment to the current video
-function addComment(_video, _user) {
+function addComment(video, user) {
   var $input = document.querySelector('#addcomments .input');
   var input = $input.value.trim();
   if (input) {
-    var comment = new Comment(users[_user].name, users[_user].icon, 40, input);
-    videos[_video].comments.unshift(comment);
+    var comment = new Comment(users[user].name, users[user].icon, 40, input);
+    videos[video].comments.unshift(comment);
     $input.value = '';
-    userCommentsArea(_video);
+    userCommentsArea(video);
   }
 }
 
 
 // Comment object constructor
-function Comment(_user, _icon, _age, _comment) {
-  this.user = _user;
-  this.icon = _icon;
-  this.age = _age;
-  this.comment = _comment;
+function Comment(user, icon, age, comment) {
+  this.user = user;
+  this.icon = icon;
+  this.age = age;
+  this.comment = comment;
 }
 
 
 // Helper function that returns index of target video in video database
-function findVideo(_embed) {
+function findVideo(embed) {
   for (var index = 0; index < videos.length; index++) {
-    if (videos[index].embed === _embed) {
+    if (videos[index].embed === embed) {
       return index;
     }
   }
 }
 
 
-document.addEventListener('submit', function(_event) {
+document.addEventListener('submit', function(event) {
 
-  _event.preventDefault();
+  event.preventDefault();
 
   var query = document.getElementById('searchbar').value;
 
   if (query.trim()) {
     query = query.trim();
     var videoList = findMatch(query);
-    var $videoBlock = newElement('div', 'class', 'videoblock');
+    var $videoBlock = CE('div', {'class': 'videoblock'}, []);
     var $videos = document.getElementById('videos');
 
     $videos.appendChild($videoBlock);
@@ -378,9 +351,8 @@ document.addEventListener('submit', function(_event) {
       buildVideoList(videoList);
     }
     else {
-      var $invalidSearch = newElement('h2', 'id', 'invalidsearch');
+      var $invalidSearch = CE('h2', {'id': 'invalidsearch'}, ['No results found for: ' + query + '.']);
 
-      $invalidSearch.textContent = 'No results found for: ' + query + '.';
       $videos.appendChild($invalidSearch);
     }
   }
@@ -389,11 +361,11 @@ document.addEventListener('submit', function(_event) {
 });
 
 
-document.addEventListener('click', function(_event) {
-  var $target = _event.target;
+document.addEventListener('click', function(event) {
+  var $target = event.target;
   var embedURL;
   if ($target.className === 'videoimg' || $target.className === 'videotitle') {
-    _event.preventDefault();
+    event.preventDefault();
 
     var $videos = document.getElementById('videos');
     embedURL = $target.getAttribute("data-embed");
