@@ -407,7 +407,6 @@ document.addEventListener('click', function(_event) {
     addComment(findVideo(embedURL), currentUser);
   }
   if ($target.className === 'cancelcomment') {
-  //document.querySelector('#addcomments .cancelcomment').value = '';
     document.querySelector('#addcomments .input').value = '';
   }
 });
