@@ -109,6 +109,7 @@ var users = [{
   icon: "https://cdn0.iconfinder.com/data/icons/PRACTIKA/256/user.png"
 }];
 var currentUser = 1;
+var CE = createElement;
 
 
 // Deletes all of the children associated with the provided element ID.
@@ -119,12 +120,7 @@ function deleteChild(element) {
 }
 
 
-/** ===========================================================================
-tagName (string): h1, div, span, etc.
-attributes (object): {key1: value1, key2: value2, ...}
-children (array): could be an array of elements, strings, string & elements...
-=========================================================================== **/
-
+// Create elements with the given attributes & child nodes
 function createElement(tagName, attributes, children) {
   var element = document.createElement(tagName);
   for (var key in attributes) {
@@ -140,18 +136,6 @@ function createElement(tagName, attributes, children) {
     }
   }
   return element;
-}
-
-
-// Helper function to create elements with a specified id/class
-function newElement(type, attribute1, attribute2) {
-  if (!type) return;
-  var $element = document.createElement(type);
-
-  if (!attribute1 || !attribute2) return $element;
-  $element.setAttribute(attribute1, attribute2);
-
-  return $element;
 }
 
 
@@ -173,168 +157,125 @@ function findMatch(query) {
 // Builds video list with videos that match the user's search query
 function buildVideoList(elements) {
   var $videoList = document.getElementById('videos');
-  var $videoBlock = newElement('div', 'id', 'videoblock');
+  var $videoBlock = CE('div', {'id': 'videoblock'}, []);
 
   $videoList.appendChild($videoBlock);
 
   for (var index = 0; index < elements.length; index++) {
-    var $videoDetails = newElement('div', 'id', 'videodetails');
-    var $videoImage = newElement('img', 'class', 'videoimg');
-    var $videoTitle = newElement('h4', 'class', 'videotitle');
-    var $videoChannel = newElement('p', 'class', 'videochannel');
-    var $videoViews = newElement('p', 'class', 'videoviews');
-    var $videoDesc = newElement('p', 'class', 'videodesc');
-    var $link1 = newElement('a', 'href', '#');
-    var $link2 = newElement('a', 'href', '#');
-
+    var $videoDetails =
+      CE('div', {'id': 'videodetails'}, [
+        CE('a', {'href': '#'}, [
+          CE('img', {'class': 'videoimg', 'src': elements[index].thumbnail, 'data-embed': elements[index].embed}, [])
+        ]),
+        CE('a', {'href': '#'}, [
+          CE('h4', {'class': 'videotitle', 'data-embed': elements[index].embed}, [elements[index].title])
+        ]),
+        CE('p', {'class': 'videochannel'}, [elements[index].channel]),
+        CE('p', {'class': 'videoviews'}, [elements[index].views + ' views']),
+        CE('p', {'class': 'videodesc'}, [elements[index].description])
+      ]);
     $videoBlock.appendChild($videoDetails);
-
-    $videoImage.setAttribute('src', elements[index].thumbnail);
-    $videoImage.setAttribute('data-embed', elements[index].embed);
-    $videoDetails.appendChild($link1);
-    $link1.appendChild($videoImage);
-
-    $videoTitle.textContent = elements[index].title;
-    $videoTitle.setAttribute('data-embed', elements[index].embed);
-    $videoDetails.appendChild($link2);
-    $link2.appendChild($videoTitle);
-
-    $videoChannel.textContent = elements[index].channel;
-    $videoDetails.appendChild($videoChannel);
-
-    $videoViews.textContent = elements[index].views + " views";
-    $videoDetails.appendChild($videoViews);
-
-    $videoDesc.textContent = elements[index].description;
-    $videoDetails.appendChild($videoDesc);
   }
 }
 
 
 // Builds the video viewing area containing video related details
 function buildViewingArea(embed) {
-  // Embedded video area
   buildVideoArea(embed);
 
-  // Video detail area
   buildVideoDetails(embed);
 
-  // Add comments area
   addCommentsArea();
 
-  // Associated user comments area
   var index = findVideo(embed);
   userCommentsArea(index);
 }
 
 
+// Populate the Video Player area
 function buildVideoArea(embed) {
   var $videos = document.getElementById('videos');
-  var $viewingArea = newElement('div', 'id', 'viewingarea');
-  var $embed = newElement('div', 'id', 'embed');
-  var $showVideo = newElement('iframe', 'width', '560px');
-
-  $showVideo.setAttribute('height', '480px');
-  $showVideo.setAttribute('width', '854px');
-  $showVideo.setAttribute('src', embed);
-  $showVideo.setAttribute('frameborder', 0);
-  $showVideo.setAttribute('allowfullscreen', '');
-  $showVideo.setAttribute('id', 'uservideo');
+  var $viewingArea = CE('div', {'id': 'viewingarea'}, []);
   $videos.appendChild($viewingArea);
+
+  var $embed =
+    CE('div', {'id': 'embed'}, [
+      CE('iframe', {'id': 'uservideo', 'height': '480px', 'width': '854px', 'src': embed, 'frameborder': 0, 'allowfullscreen': ''}, [])
+    ]);
   $viewingArea.appendChild($embed);
-  $embed.appendChild($showVideo);
 }
 
 
+// Populate the Video Details section
 function buildVideoDetails(embed) {
   var $videos = document.getElementById('videos');
-  var $videoinfo = newElement('div', 'id', 'videoinfo');
-  var $titlebox = newElement('div', 'id', 'titlebox');
-  var $title = newElement('h2', 'class', 'title');
-  var $channelbox = newElement('div', 'id', 'channelbox');
-  var $channel = newElement('p', 'class', 'channel');
-  var $channelicon = newElement('img', 'class', 'videoicon');
-  var $description = newElement('p', 'class', 'desc');
-  var $views = newElement('p', 'class', 'views');
+  var index = findVideo(embed);
+  var $titlebox =
+    CE('div', {'id': 'titlebox'}, [
+      CE('h2', {'class': 'title'}, [videos[index].title])
+    ]);
+  var $channelbox =
+    CE('div', {'id': 'channelbox'}, [
+      CE('img', {'class': 'videoicon', 'src': videos[index].channelicon}, []),
+      CE('p', {'class': 'channel'}, [videos[index].channel])
+    ]);
+  var $videoinfo =
+    CE('div', {'id': 'videoinfo'}, [
+      $titlebox, $channelbox,
+      CE('p', {'class': 'views'}, [videos[index].views + ' views']),
+      CE('p', {'class': 'desc'}, [videos[index].description])
+  ]);
 
   $videos.appendChild($videoinfo);
-
-  var index = findVideo(embed);
-  var title = videos[index].title;
-  var channel = videos[index].channel;
-  var channelicon = videos[index].channelicon;
-  var description = videos[index].description;
-  var views = videos[index].views;
-
-  $title.textContent = title;
-  $channel.textContent = channel;
-  $channelicon.setAttribute('src', channelicon);
-  $description.textContent = description;
-  $views.textContent = views + " views";
-
-  $videoinfo.appendChild($titlebox);
-  $titlebox.appendChild($title);
-  $videoinfo.appendChild($channelbox);
-  $channelbox.appendChild($channelicon);
-  $channelbox.appendChild($channel);
-  $videoinfo.appendChild($views);
-  $videoinfo.appendChild($description);
 }
 
 
-// Helper function that creates the Add Comment section
+// Populate the Add Comments section
 function addCommentsArea() {
   var $videos = document.getElementById('videos');
-  var $addComments = newElement('div', 'id', 'addcomments');
-  var $commentWrapper = newElement('div', 'class', 'wrap');
-  var $commentHeader = newElement('h4', 'class', 'header');
-  var $comment = newElement('form', '', '');
-  var $commentInput = newElement('textarea', 'class', 'input');
-  var $author = newElement('span', 'class', 'author');
-  var $userIcon = newElement('img', 'src', users[currentUser].icon);
-  var $buttonwrap = newElement('div', 'class', 'buttonwrap');
-  var $cancel = newElement('button', 'class', 'cancelcomment');
-  var $submit = newElement('button', 'class', 'submitcomment');
+  var $author =
+    CE('span', {'class': 'author'}, [
+      CE('img', {'class': 'icon', 'src': users[currentUser].icon}, [])
+    ]);
+  var $commentWrap =
+    CE('div', {'class': 'wrap'}, [
+      CE('form', {'action': ''}, [
+        CE('textarea', {'class': 'input', 'type': 'text', 'placeholder': 'Add a public comment...', 'name': 'comment'}, [])
+      ]),
+      CE('div', {'class': 'buttonwrap'}, [
+        CE('button', {'class': 'submitcomment'}, ['Comment']),
+        CE('button', {'class': 'cancelcomment'}, ['Cancel'])
+      ])
+    ]);
+  var $addComments = CE('div', {'id': 'addcomments'}, [
+    CE('h4', {'class': 'header'}, []),
+    $author,
+    $commentWrap
+  ]);
 
-  $comment.setAttribute('action','');
-  $commentInput.setAttribute('placeholder', 'Add a public comment...');
-  $commentInput.setAttribute('type', 'text');
-  $commentInput.setAttribute('name', 'comment');
-  $userIcon.setAttribute('class', 'icon');
   $videos.appendChild($addComments);
-  $addComments.appendChild($commentHeader);
-  $addComments.appendChild($author);
-  $author.appendChild($userIcon);
-  $addComments.appendChild($commentWrapper);
-  $commentWrapper.appendChild($comment);
-  $comment.appendChild($commentInput);
-  $commentWrapper.appendChild($buttonwrap);
-  $cancel.textContent = "Cancel";
-  $submit.textContent = "Comment";
-  $buttonwrap.appendChild($submit);
-  $buttonwrap.appendChild($cancel);
 }
 
 
-// Helper function that creates the User Comments area
-function userCommentsArea(video) {
+// Populate the User Comments section
+function userCommentsArea(index) {
   var $videos = document.getElementById('videos');
   var $commentHeader = document.querySelector('#addcomments .header');
-  var numComments = videos[video].comments.length;
+  var numComments = videos[index].comments.length;
 
-  $commentHeader.textContent = "COMMENTS • " + numComments;
+  $commentHeader.textContent = 'COMMENTS • ' + numComments;
 
   if (numComments > 0) {
     var $exists = document.getElementById('usercomments');
 
     if ($exists) {
       deleteChild($exists);
-      populate(video, $exists, numComments);
+      populate(index, $exists, numComments);
     }
     else {
-      var $userComments = newElement('div', 'id', 'usercomments');
+      var $userComments = CE('div', {'id': 'usercomments'}, []);
       $videos.appendChild($userComments);
-      populate(video, $userComments, numComments);
+      populate(index, $userComments, numComments);
     }
   }
 }
@@ -343,21 +284,17 @@ function userCommentsArea(video) {
 // Helper function that adds comments to user comment area
 function populate(video, $element, numComments) {
   for (var index = 0; index < numComments; index++) {
-    var $commentWrap = newElement('div', 'class', 'wrap');
-    var $commentBlock = newElement('div', 'class', 'block');
-    var $icon = newElement('img', 'src', videos[video].comments[index].icon);
-    var $author = newElement('span', 'class', 'author');
-    var $user = newElement('p', 'class', 'user');
-    var $comment = newElement('p', 'class', 'comment');
-    $icon.setAttribute('class', 'icon');
-    $element.appendChild($commentBlock);
-    $commentBlock.appendChild($author);
-    $author.appendChild($icon);
-    $commentBlock.appendChild($commentWrap);
-    $user.textContent = videos[video].comments[index].user;
-    $commentWrap.appendChild($user);
-    $comment.textContent = videos[video].comments[index].comment;
-    $commentWrap.appendChild($comment);
+    var $userComment = CE('div', {'class': 'block'}, [
+      CE('span', {'class': 'author'}, [
+        CE('img', {'class': 'icon', 'src': videos[video].comments[index].icon}, [])
+      ]),
+      CE('div', {'class': 'wrap'}, [
+        CE('p', {'class': 'user'}, [videos[video].comments[index].user]),
+        CE('p', {'class': 'comment'}, [videos[video].comments[index].comment])
+      ])
+    ]);
+
+    $element.appendChild($userComment);
   }
 }
 
@@ -403,7 +340,7 @@ document.addEventListener('submit', function(event) {
   if (query.trim()) {
     query = query.trim();
     var videoList = findMatch(query);
-    var $videoBlock = newElement('div', 'class', 'videoblock');
+    var $videoBlock = CE('div', {'class': 'videoblock'}, []);
     var $videos = document.getElementById('videos');
 
     $videos.appendChild($videoBlock);
@@ -414,9 +351,8 @@ document.addEventListener('submit', function(event) {
       buildVideoList(videoList);
     }
     else {
-      var $invalidSearch = newElement('h2', 'id', 'invalidsearch');
+      var $invalidSearch = CE('h2', {'id': 'invalidsearch'}, ['No results found for: ' + query + '.']);
 
-      $invalidSearch.textContent = 'No results found for: ' + query + '.';
       $videos.appendChild($invalidSearch);
     }
   }
