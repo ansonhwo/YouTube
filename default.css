@@ -181,28 +181,24 @@ body {
   margin-right: auto;
   margin-left: auto;
   margin-bottom: 10px;
+  padding-top: 20px;
+  padding-right: 20px;
+  padding-left: 20px;
+  padding-bottom: 12px;
   height: auto;
-  width: 80vw;
+  width: 75vw;
   min-width: 834px;
 }
 
 #videoinfo .title {
   margin: 0;
-  padding-top: 13px;
-  padding-right: 15px;
-  padding-left: 15px;
   padding-bottom: 10px;
   font-weight: 500;
   width: 70%;
 }
 
-#videoinfo #channelbox {
-  padding-left: 15px;
-}
-
 #videoinfo .icon {
   display: inline-block;
-  margin-left: 15px;
 }
 
 #videoinfo .channel {
@@ -219,7 +215,6 @@ body {
 }
 
 #videoinfo .views {
-  padding-right: 10px;
   font-size: 22px;
   text-align: right;
   margin-top: -25px;
@@ -234,5 +229,139 @@ body {
   margin-left: auto;
   margin-right: auto;
   padding-top: 10px;
-  width: 97%;
+  width: 100%;
+}
+
+#addcomments {
+  position: relative;
+  background-color: #fff;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #e2e2e2;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 10px;
+  padding: 20px;
+  width: 75vw;
+  min-width: 834px;
+  height: 125px;
+}
+
+#addcomments .header {
+  font-weight: 200;
+  margin-top: 0;
+  margin-bottom: 12px;
+}
+
+#addcomments .author,
+#addcomments .icon {
+  height: 48px;
+  width: 48px;
+}
+
+#addcomments .wrap {
+  float: right;
+  margin-right: 15px;
+  width: 92%;
+}
+
+#addcomments .input {
+  outline-width: thin;
+  resize: none;
+  font-size: 14px;
+  width: 100%;
+  height: 40px;
+}
+
+#addcomments .buttonwrap {
+  margin-top: 10px;
+  width: 100%;
+}
+
+#addcomments .cancelcomment:hover,
+#addcomments .submitcomment:hover {
+  cursor: pointer;
+}
+
+#addcomments .cancelcomment:active {
+  background-color: #f0f0f0;
+}
+
+#addcomments .submitcomment:active {
+  background-color: #165fc6;
+}
+
+#addcomments .cancelcomment {
+  float: right;
+  background-color: #f8f8f8;
+  outline: 0;
+  font-size: 11px;
+  border-style: solid;
+  border-radius: 3px;
+  border-width: 1px;
+  margin-right: 10px;
+  height: 35px;
+  width: 80px;
+}
+
+#addcomments .submitcomment {
+  float: right;
+  background-color: #167ac6;
+  outline: 0;
+  color: #fff;
+  font-size: 11px;
+  border-style: solid;
+  border-radius: 3px;
+  border-width: 1px;
+  margin-right: -7px;
+  height: 35px;
+  width: 80px;
+}
+
+#usercomments {
+  background-color: #fff;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #e2e2e2;
+  margin-right: auto;
+  margin-left: auto;
+  margin-bottom: 15px;
+  padding-top: 20px;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-bottom: 10px;
+  width: 75vw;
+  height: auto;
+}
+
+#usercomments .wrap,
+#usercomments .author {
+  display: inline-block;
+  vertical-align: top;
+}
+
+#usercomments .wrap {
+  margin-left: 15px;
+  height: auto;
+  min-height: 50px;
+  width: 90%;
+}
+
+#usercomments .comment {
+  font-weight: 300;
+  margin-top: 10px;
+  width: 100%;
+}
+
+#usercomments .author,
+#usercomments .icon {
+  height: 48px;
+  width: 48px;
+}
+
+#usercomments .user {
+  color: #128ee9;
+  font-size: 16px;
+  margin: 0;
+  width: 40%;
 }
