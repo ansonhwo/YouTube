@@ -112,32 +112,56 @@ var currentUser = 1;
 
 
 // Deletes all of the children associated with the provided element ID.
-function deleteChild(_element) {
-  while (_element.hasChildNodes()) {
-    _element.removeChild(_element.lastChild);
+function deleteChild(element) {
+  while (element.hasChildNodes()) {
+    element.removeChild(element.lastChild);
   }
 }
 
 
-// Helper function to create elements with a specified id/class
-function newElement(_type, _attribute1, _attribute2) {
-  if (!_type) return;
-  var $element = document.createElement(_type);
+/** ===========================================================================
+tagName (string): h1, div, span, etc.
+attributes (object): {key1: value1, key2: value2, ...}
+children (array): could be an array of elements, strings, string & elements...
+=========================================================================== **/
 
-  if (!_attribute1 || !_attribute2) return $element;
-  $element.setAttribute(_attribute1, _attribute2);
+function createElement(tagName, attributes, children) {
+  var element = document.createElement(tagName);
+  for (var key in attributes) {
+    element.setAttribute(key, attributes[key]);
+  }
+  for (var index = 0; index < children.length; index++) {
+    var child = children[index];
+    if (child instanceof Element) {
+      element.appendChild(child);
+    }
+    else {
+      element.appendChild(document.createTextNode(child));
+    }
+  }
+  return element;
+}
+
+
+// Helper function to create elements with a specified id/class
+function newElement(type, attribute1, attribute2) {
+  if (!type) return;
+  var $element = document.createElement(type);
+
+  if (!attribute1 || !attribute2) return $element;
+  $element.setAttribute(attribute1, attribute2);
 
   return $element;
 }
 
 
 // Return an array of matched video objects based on user query.
-function findMatch(_query) {
+function findMatch(query) {
   var videoList = [];
 
   for (var index = 0; index < videos.length; index++) {
     var itemText = videos[index].description + videos[index].title + videos[index].channel;
-    if (itemText.toLowerCase().includes(_query.toLowerCase())) {
+    if (itemText.toLowerCase().includes(query.toLowerCase())) {
       videoList.push(videos[index]);
     }
   }
@@ -147,13 +171,13 @@ function findMatch(_query) {
 
 
 // Builds video list with videos that match the user's search query
-function buildVideoList(_elements) {
+function buildVideoList(elements) {
   var $videoList = document.getElementById('videos');
   var $videoBlock = newElement('div', 'id', 'videoblock');
 
   $videoList.appendChild($videoBlock);
 
-  for (var index = 0; index < _elements.length; index++) {
+  for (var index = 0; index < elements.length; index++) {
     var $videoDetails = newElement('div', 'id', 'videodetails');
     var $videoImage = newElement('img', 'class', 'videoimg');
     var $videoTitle = newElement('h4', 'class', 'videotitle');
@@ -165,31 +189,46 @@ function buildVideoList(_elements) {
 
     $videoBlock.appendChild($videoDetails);
 
-    $videoImage.setAttribute('src', _elements[index].thumbnail);
-    $videoImage.setAttribute('data-embed', _elements[index].embed);
+    $videoImage.setAttribute('src', elements[index].thumbnail);
+    $videoImage.setAttribute('data-embed', elements[index].embed);
     $videoDetails.appendChild($link1);
     $link1.appendChild($videoImage);
 
-    $videoTitle.textContent = _elements[index].title;
-    $videoTitle.setAttribute('data-embed', _elements[index].embed);
+    $videoTitle.textContent = elements[index].title;
+    $videoTitle.setAttribute('data-embed', elements[index].embed);
     $videoDetails.appendChild($link2);
     $link2.appendChild($videoTitle);
 
-    $videoChannel.textContent = _elements[index].channel;
+    $videoChannel.textContent = elements[index].channel;
     $videoDetails.appendChild($videoChannel);
 
-    $videoViews.textContent = _elements[index].views + " views";
+    $videoViews.textContent = elements[index].views + " views";
     $videoDetails.appendChild($videoViews);
 
-    $videoDesc.textContent = _elements[index].description;
+    $videoDesc.textContent = elements[index].description;
     $videoDetails.appendChild($videoDesc);
   }
 }
 
 
 // Builds the video viewing area containing video related details
-function buildViewingArea(_embed) {
+function buildViewingArea(embed) {
   // Embedded video area
+  buildVideoArea(embed);
+
+  // Video detail area
+  buildVideoDetails(embed);
+
+  // Add comments area
+  addCommentsArea();
+
+  // Associated user comments area
+  var index = findVideo(embed);
+  userCommentsArea(index);
+}
+
+
+function buildVideoArea(embed) {
   var $videos = document.getElementById('videos');
   var $viewingArea = newElement('div', 'id', 'viewingarea');
   var $embed = newElement('div', 'id', 'embed');
@@ -197,15 +236,18 @@ function buildViewingArea(_embed) {
 
   $showVideo.setAttribute('height', '480px');
   $showVideo.setAttribute('width', '854px');
-  $showVideo.setAttribute('src', _embed);
+  $showVideo.setAttribute('src', embed);
   $showVideo.setAttribute('frameborder', 0);
   $showVideo.setAttribute('allowfullscreen', '');
   $showVideo.setAttribute('id', 'uservideo');
   $videos.appendChild($viewingArea);
   $viewingArea.appendChild($embed);
   $embed.appendChild($showVideo);
+}
 
-  // Video detail area
+
+function buildVideoDetails(embed) {
+  var $videos = document.getElementById('videos');
   var $videoinfo = newElement('div', 'id', 'videoinfo');
   var $titlebox = newElement('div', 'id', 'titlebox');
   var $title = newElement('h2', 'class', 'title');
@@ -217,7 +259,7 @@ function buildViewingArea(_embed) {
 
   $videos.appendChild($videoinfo);
 
-  var index = findVideo(_embed);
+  var index = findVideo(embed);
   var title = videos[index].title;
   var channel = videos[index].channel;
   var channelicon = videos[index].channelicon;
@@ -237,12 +279,6 @@ function buildViewingArea(_embed) {
   $channelbox.appendChild($channel);
   $videoinfo.appendChild($views);
   $videoinfo.appendChild($description);
-
-  // Add comments area
-  addCommentsArea();
-
-  // Associated user comments area
-  userCommentsArea(index);
 }
 
 
@@ -281,10 +317,10 @@ function addCommentsArea() {
 
 
 // Helper function that creates the User Comments area
-function userCommentsArea(_video) {
+function userCommentsArea(video) {
   var $videos = document.getElementById('videos');
   var $commentHeader = document.querySelector('#addcomments .header');
-  var numComments = videos[_video].comments.length;
+  var numComments = videos[video].comments.length;
 
   $commentHeader.textContent = "COMMENTS • " + numComments;
 
@@ -293,74 +329,74 @@ function userCommentsArea(_video) {
 
     if ($exists) {
       deleteChild($exists);
-      populate(_video, $exists, numComments);
+      populate(video, $exists, numComments);
     }
     else {
       var $userComments = newElement('div', 'id', 'usercomments');
       $videos.appendChild($userComments);
-      populate(_video, $userComments, numComments);
+      populate(video, $userComments, numComments);
     }
   }
 }
 
 
 // Helper function that adds comments to user comment area
-function populate(_video, _element, _numcomments) {
-  for (var index = 0; index < _numcomments; index++) {
+function populate(video, $element, numComments) {
+  for (var index = 0; index < numComments; index++) {
     var $commentWrap = newElement('div', 'class', 'wrap');
     var $commentBlock = newElement('div', 'class', 'block');
-    var $icon = newElement('img', 'src', videos[_video].comments[index].icon);
+    var $icon = newElement('img', 'src', videos[video].comments[index].icon);
     var $author = newElement('span', 'class', 'author');
     var $user = newElement('p', 'class', 'user');
     var $comment = newElement('p', 'class', 'comment');
     $icon.setAttribute('class', 'icon');
-    _element.appendChild($commentBlock);
+    $element.appendChild($commentBlock);
     $commentBlock.appendChild($author);
     $author.appendChild($icon);
     $commentBlock.appendChild($commentWrap);
-    $user.textContent = videos[_video].comments[index].user;
+    $user.textContent = videos[video].comments[index].user;
     $commentWrap.appendChild($user);
-    $comment.textContent = videos[_video].comments[index].comment;
+    $comment.textContent = videos[video].comments[index].comment;
     $commentWrap.appendChild($comment);
   }
 }
 
 
 // Adds a new comment to the current video
-function addComment(_video, _user) {
+function addComment(video, user) {
   var $input = document.querySelector('#addcomments .input');
   var input = $input.value.trim();
   if (input) {
-    var comment = new Comment(users[_user].name, users[_user].icon, 40, input);
-    videos[_video].comments.unshift(comment);
+    var comment = new Comment(users[user].name, users[user].icon, 40, input);
+    videos[video].comments.unshift(comment);
     $input.value = '';
-    userCommentsArea(_video);
+    userCommentsArea(video);
   }
 }
 
 
 // Comment object constructor
-function Comment(_user, _icon, _age, _comment) {
-  this.user = _user;
-  this.icon = _icon;
-  this.age = _age;
-  this.comment = _comment;
+function Comment(user, icon, age, comment) {
+  this.user = user;
+  this.icon = icon;
+  this.age = age;
+  this.comment = comment;
 }
 
 
 // Helper function that returns index of target video in video database
-function findVideo(_embed) {
+function findVideo(embed) {
   for (var index = 0; index < videos.length; index++) {
-    if (videos[index].embed === _embed) {
+    if (videos[index].embed === embed) {
       return index;
     }
   }
 }
 
 
-document.addEventListener('submit', function(_event) {
+document.addEventListener('submit', function(event) {
 
-  _event.preventDefault();
+  event.preventDefault();
 
   var query = document.getElementById('searchbar').value;
 
@@ -389,11 +425,11 @@ document.addEventListener('submit', function(_event) {
 });
 
 
-document.addEventListener('click', function(_event) {
-  var $target = _event.target;
+document.addEventListener('click', function(event) {
+  var $target = event.target;
   var embedURL;
   if ($target.className === 'videoimg' || $target.className === 'videotitle') {
-    _event.preventDefault();
+    event.preventDefault();
 
     var $videos = document.getElementById('videos');
     embedURL = $target.getAttribute("data-embed");
