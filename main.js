@@ -239,7 +239,7 @@ function buildViewingArea(_embed) {
   $videoinfo.appendChild($description);
 
   // Add comments area
-  addCommentsArea(index);
+  addCommentsArea();
 
   // Associated user comments area
   userCommentsArea(index);
@@ -247,7 +247,7 @@ function buildViewingArea(_embed) {
 
 
 // Helper function that creates the Add Comment section
-function addCommentsArea(_video) {
+function addCommentsArea() {
   var $videos = document.getElementById('videos');
   var $addComments = newElement('div', 'id', 'addcomments');
   var $commentWrapper = newElement('div', 'class', 'wrap');
@@ -257,6 +257,7 @@ function addCommentsArea(_video) {
   var $author = newElement('span', 'class', 'author');
   var $userIcon = newElement('img', 'src', users[currentUser].icon);
   var $buttonwrap = newElement('div', 'class', 'buttonwrap');
+  var $cancel = newElement('button', 'class', 'cancelcomment');
   var $submit = newElement('button', 'class', 'submitcomment');
 
   $comment.setAttribute('action','');
@@ -271,9 +272,11 @@ function addCommentsArea(_video) {
   $addComments.appendChild($commentWrapper);
   $commentWrapper.appendChild($comment);
   $comment.appendChild($commentInput);
-  $addComments.appendChild($buttonwrap);
+  $commentWrapper.appendChild($buttonwrap);
+  $cancel.textContent = "Cancel";
   $submit.textContent = "Comment";
   $buttonwrap.appendChild($submit);
+  $buttonwrap.appendChild($cancel);
 }
 
 
