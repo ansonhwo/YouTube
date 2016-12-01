@@ -146,15 +146,86 @@ function createElement(tagName, attributes, children) {
 // Return an array of matched video objects based on user query.
 function findMatch(query) {
   var videoList = [];
+  var videoScores = [];
+  var searchWords = query.split(' ');
+  var channel, title, description, subscribed, score = 0;
 
-  for (var index = 0; index < videos.length; index++) {
-    var itemText = videos[index].description + videos[index].title + videos[index].channel;
-    if (itemText.toLowerCase().includes(query.toLowerCase())) {
-      videoList.push(videos[index]);
+  for (var index = 0; index < searchWords.length; index++) {
+    var search = searchWords[index];
+
+    if (search) {
+      search = search.toLowerCase().replace(/[^A-Za-z0-9\s]/g,'');
+      console.log('[[[ searching for: "' + search + '" ]]]');
+
+      for (var video = 0; video < videos.length; video++) {
+        subscribed = false;
+        channel = videos[video].channel.toLowerCase().replace(/[^A-Za-z0-9\s]/g,'').includes(search);
+        title = videos[video].title.toLowerCase().replace(/[^A-Za-z0-9\s]/g,'').includes(search);
+        description = videos[video].description.toLowerCase().replace(/[^A-Za-z0-9\s]/g,'').includes(search);
+        if (channel || title || description) {
+          if (getScore(videoScores, video) < 0) {
+            videoScores.push([video, 0]);
+            score = 0;
+          }
+          else {
+            score = getScore(videoScores, video);
+          }
+          for (var sub = 0; sub < users[currentUser].subscribed.length; sub++) {
+            if (users[currentUser].subscribed[sub] === videos[video].channel) subscribed = true;
+          }
+          console.log('Title: ' + videos[video].title + '\n\tChannel: ' + videos[video].channel + '\n\tDescription: ' + videos[video].description + '\n\tSubscribed? ' + subscribed);
+          if (subscribed) {
+            if (channel) score += 20;
+            if (title) score += 10;
+            if (description) score += 0.5;
+          }
+          else {
+            if (channel) score += 1;
+            if (title) score += 0.5;
+            if (description) score += 0.1;
+          }
+          setScore(videoScores, video, score);
+          console.log('\tscore: ' + score + '\nvideo scores: ' + videoScores);
+        }
+      }
+    }
+    console.log('\n====================\n====================\n====================');
+  }
+  console.log('unsorted scores: ' + videoScores);
+  videoScores.sort(function (video1, video2) {
+    if (video1[1] < video2[1]) return 1;
+    else return 0;
+  });
+  console.log('sorted scores: ' + videoScores);
+
+  for (var index = 0; index < videoScores.length; index++) {
+    videoList.push(videos[videoScores[index][0]]);
+  }
+  return videoList;
+}
+
+
+// Finds if a score already exists for a matched video
+function getScore(list, video) {
+  var score = -1;
+  for (var index = 0; index < list.length; index++) {
+    if (list[index][0] === video) {
+      score = list[index][1];
+      break;
     }
   }
+  return score;
+}
 
-  return videoList;
+
+// Updates the score for the specified video
+function setScore(list, video, score) {
+  for (var index = 0; index < list.length; index++) {
+    if (list[index][0] === video) {
+      list[index][1] = score;
+      break;
+    }
+  }
 }
 
 
