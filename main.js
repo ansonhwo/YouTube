@@ -171,7 +171,7 @@ function findMatch(query) {
             }
           }
           if (subscribed) {
-            if (channel) score += 20;
+            if (channel) score += 500;
             if (title) score += 10;
             if (description) score += 0.5;
           }
