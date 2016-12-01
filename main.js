@@ -214,13 +214,14 @@ function buildVideoArea(embed) {
 function buildVideoDetails(embed) {
   var $videos = document.getElementById('videos');
   var index = findVideo(embed);
-  var subscribed = (users[currentUser].subscribed.includes(videos[index].channel)) ?  '✓ Subscribed' : 'Subscribe';
+  var subscribed = users[currentUser].subscribed.includes(videos[index].channel);
+  //var subscribed = (users[currentUser].subscribed.includes(videos[index].channel)) ?  '✓ Subscribed' : 'Subscribe';
   var $channelbox =
       CE('div', {'id': 'channelbox'}, [
         CE('img', {'class': 'videoicon', 'src': videos[index].channelicon}, []),
         CE('div', {'class': 'channelwrap'}, [
           CE('p', {'class': 'channel'}, [videos[index].channel]),
-          CE('button', {'id': 'subscribe', 'class': (users[currentUser].subscribed.includes(videos[index].channel)) ? 'yes' : 'no'}, [subscribed])
+          CE('button', {'id': 'subscribe', 'class': subscribed ? 'yes' : 'no'}, [subscribed ? '✓ Subscribed' : 'Subscribe'])
         ])
       ]);
   var $titlebox =
