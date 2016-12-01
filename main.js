@@ -171,13 +171,13 @@ function findMatch(query) {
             }
           }
           if (subscribed) {
-            if (channel) score += 500;
-            if (title) score += 10;
+            if (channel) score += 1000;
+            if (title) score += 20;
             if (description) score += 0.5;
           }
           else {
-            if (channel) score += 1;
-            if (title) score += 0.5;
+            if (channel) score += 100;
+            if (title) score += 2;
             if (description) score += 0.1;
           }
           setScore(videoScores, video, score);
