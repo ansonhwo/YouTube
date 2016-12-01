@@ -94,19 +94,23 @@ var videos = [
 }];
 var users = [{
   name: "User1",
-  icon: "http://simpleicon.com/wp-content/uploads/user1.png"
+  icon: "http://simpleicon.com/wp-content/uploads/user1.png",
+  subscribed: []
 },
 {
   name: "User2",
-  icon: "https://cdn0.iconfinder.com/data/icons/PRACTIKA/256/user.png"
+  icon: "https://cdn0.iconfinder.com/data/icons/PRACTIKA/256/user.png",
+  subscribed: []
 },
 {
   name: "User3",
-  icon: "http://downloadicons.net/sites/default/files/women-business-user-icon-44928.png"
+  icon: "http://downloadicons.net/sites/default/files/women-business-user-icon-44928.png",
+  subscribed: []
 },
 {
   name: "User4",
-  icon: "https://cdn0.iconfinder.com/data/icons/PRACTIKA/256/user.png"
+  icon: "https://cdn0.iconfinder.com/data/icons/PRACTIKA/256/user.png",
+  subscribed: []
 }];
 var currentUser = 1;
 var CE = createElement;
@@ -210,14 +214,18 @@ function buildVideoArea(embed) {
 function buildVideoDetails(embed) {
   var $videos = document.getElementById('videos');
   var index = findVideo(embed);
+  var subscribed = users[currentUser].subscribed.includes(videos[index].channel);
+  var $channelbox =
+      CE('div', {'id': 'channelbox'}, [
+        CE('img', {'class': 'videoicon', 'src': videos[index].channelicon}, []),
+        CE('div', {'class': 'channelwrap'}, [
+          CE('p', {'class': 'channel'}, [videos[index].channel]),
+          CE('button', {'id': 'subscribe', 'class': subscribed ? 'yes' : 'no'}, [subscribed ? '✓ Subscribed' : 'Subscribe'])
+        ])
+      ]);
   var $titlebox =
     CE('div', {'id': 'titlebox'}, [
       CE('h2', {'class': 'title'}, [videos[index].title])
-    ]);
-  var $channelbox =
-    CE('div', {'id': 'channelbox'}, [
-      CE('img', {'class': 'videoicon', 'src': videos[index].channelicon}, []),
-      CE('p', {'class': 'channel'}, [videos[index].channel])
     ]);
   var $videoinfo =
     CE('div', {'id': 'videoinfo'}, [
@@ -368,7 +376,7 @@ document.addEventListener('click', function(event) {
     event.preventDefault();
 
     var $videos = document.getElementById('videos');
-    embedURL = $target.getAttribute("data-embed");
+    embedURL = $target.getAttribute('data-embed');
 
     deleteChild($videos);
 
@@ -380,5 +388,18 @@ document.addEventListener('click', function(event) {
   }
   if ($target.className === 'cancelcomment') {
     document.querySelector('#addcomments .input').value = '';
+  }
+  if ($target.id === 'subscribe') {
+    var channel = document.querySelector('#videoinfo .channelwrap .channel').textContent;
+    if($target.className === 'yes') {
+      $target.setAttribute('class', 'no');
+      $target.textContent = 'Subscribe';
+      users[currentUser].subscribed.splice(users[currentUser].subscribed.indexOf(channel), 1);
+    }
+    else {
+      $target.setAttribute('class', 'yes');
+      $target.textContent = '✓ Subscribed';
+      users[currentUser].subscribed.push(channel);
+    }
   }
 });
