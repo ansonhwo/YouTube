@@ -215,7 +215,6 @@ function buildVideoDetails(embed) {
   var $videos = document.getElementById('videos');
   var index = findVideo(embed);
   var subscribed = users[currentUser].subscribed.includes(videos[index].channel);
-  //var subscribed = (users[currentUser].subscribed.includes(videos[index].channel)) ?  '✓ Subscribed' : 'Subscribe';
   var $channelbox =
       CE('div', {'id': 'channelbox'}, [
         CE('img', {'class': 'videoicon', 'src': videos[index].channelicon}, []),
