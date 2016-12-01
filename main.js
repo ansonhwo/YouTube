@@ -145,32 +145,30 @@ function createElement(tagName, attributes, children) {
 
 // Return an array of matched video objects based on user query.
 function findMatch(query) {
-  var videoList = [];
-  var videoScores = [];
+  var videoList = [], videoScores = [];
   var searchWords = query.split(' ');
   var channel, title, description, subscribed, score = 0;
 
   for (var index = 0; index < searchWords.length; index++) {
-    var search = searchWords[index];
+    var search = searchWords[index].toLowerCase().replace(/[^A-Za-z0-9\s]/g,'');
 
     if (search) {
-      search = search.toLowerCase().replace(/[^A-Za-z0-9\s]/g,'');
-
       for (var video = 0; video < videos.length; video++) {
         subscribed = false;
         channel = videos[video].channel.toLowerCase().replace(/[^A-Za-z0-9\s]/g,'').includes(search);
         title = videos[video].title.toLowerCase().replace(/[^A-Za-z0-9\s]/g,'').includes(search);
         description = videos[video].description.toLowerCase().replace(/[^A-Za-z0-9\s]/g,'').includes(search);
         if (channel || title || description) {
-          if (getScore(videoScores, video) < 0) {
+          score = getScore(videoScores, video);
+          if (score < 0) {
             videoScores.push([video, 0]);
             score = 0;
           }
-          else {
-            score = getScore(videoScores, video);
-          }
           for (var sub = 0; sub < users[currentUser].subscribed.length; sub++) {
-            if (users[currentUser].subscribed[sub] === videos[video].channel) subscribed = true;
+            if (users[currentUser].subscribed[sub] === videos[video].channel) {
+              subscribed = true;
+              break;
+            }
           }
           if (subscribed) {
             if (channel) score += 20;
