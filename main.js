@@ -164,6 +164,21 @@ function filterVideos(filter) {
   var query = document.getElementById('searchbar').value.trim();
   var $videoBlock = document.querySelector('#videos #videoblock');
   var $allVideos = $videoBlock.getElementsByClassName('videodetails');
+
+  /**for (var index = 0; index < $allVideos.length; index++) {
+    var $element = $allVideos[index];
+
+  }
+
+  if (filter === 0) {
+
+  }
+  else if (filter === 1) {
+
+  }
+  else if (filter === 2) {
+
+  }**/
 }
 
 
@@ -286,7 +301,7 @@ function buildFilter($element) {
   var $filterOptions = CE('div', {'id': 'bottom-filter', 'class': 'hidden'}, [
     CE('div', {'class': 'option-block'}, [
       CE('span', {'class': 'option toggle', 'data-opt': 0}, ['Relevance']),
-      CE('span', {'class': 'option', 'data-opt': 1}, ['View Count']),
+      CE('span', {'class': 'option', 'data-opt': 1}, ['Most Viewed']),
       CE('span', {'class': 'option', 'data-opt': 2}, ['Subscribed'])
     ])
   ]);
