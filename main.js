@@ -143,6 +143,22 @@ function createElement(tagName, attributes, children) {
 }
 
 
+// Set a hidden object to active within a specified element
+function show(target) {
+  var $element = target.getElementsByClassName('hidden')[0];
+  $element.classList.add('active');
+  $element.classList.remove('hidden');
+}
+
+
+// Set an active object to hidden within a specified element
+function hide(target) {
+  var $element = target.getElementsByClassName('active')[0];
+  $element.classList.add('hidden');
+  $element.classList.remove('active');
+}
+
+
 // Return an array of matched video objects based on user query.
 function findMatch(query) {
   var videoList = [], videoScores = [];
@@ -243,6 +259,33 @@ function buildVideoList(elements) {
       ]);
     $videoBlock.appendChild($videoDetails);
   }
+}
+
+
+// Builds the filter selector area
+function buildFilter($element) {
+  var $filterBlock = CE('div', {'id': 'filterblock'}, []);
+
+  var $filter = CE('div', {'id': 'top-filter'}, [
+    CE('button', {'id': 'filter'}, [
+      CE('span', {'class': 'filter-text'}, ["Filters"]),
+      CE('span', {'class': 'filter-icon'}, [
+        CE('i', {'class': 'fa fa-caret-down filter', 'aria-hidden': 'true'}, [])
+      ])
+    ])
+  ]);
+
+  var $filterOptions = CE('div', {'id': 'bottom-filter', 'class': 'hidden'}, [
+    CE('div', {'class': 'option-block'}, [
+      CE('span', {'class': 'option'}, ['Relevance']),
+      CE('span', {'class': 'option'}, ['View Count']),
+      CE('span', {'class': 'option'}, ['Subscribed'])
+    ])
+  ]);
+
+  $element.appendChild($filterBlock);
+  $filterBlock.appendChild($filter);
+  $filterBlock.appendChild($filterOptions);
 }
 
 
@@ -419,6 +462,7 @@ document.addEventListener('submit', function(event) {
     deleteChild($videos);
 
     if (videoList.length > 0) {
+      buildFilter($videos);
       buildVideoList(videoList);
     }
     else {
@@ -464,5 +508,23 @@ document.addEventListener('click', function(event) {
       $target.textContent = '✓ Subscribed';
       users[currentUser].subscribed.push(channel);
     }
+  }
+  if ($target.id === 'filter' || $target.className.includes('filter')) {
+    var $filter = document.getElementById('filterblock');
+    if ($filter.getElementsByClassName('hidden').length > 0) {
+      show($filter);
+    }
+    else {
+      hide($filter);
+    }
+  }
+  if ($target.className.includes('option')) {
+    var $options = $target.parentElement.getElementsByClassName('option');
+    for (var index = 0; index < $options.length; index++) {
+      if ($options.item(index).className.includes('on')) {
+        $options.item(index).classList.remove('on');
+      }
+    }
+    $target.classList.add('on');
   }
 });
