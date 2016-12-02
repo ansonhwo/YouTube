@@ -5,7 +5,7 @@ var videos = [
   channelicon: "https://yt3.ggpht.com/-CmoaPOAkgk8/AAAAAAAAAAI/AAAAAAAAAAA/RCGcK9m4sHo/s48-c-k-no-mo-rj-c0xffffff/photo.jpg",
   description: "The President-elect shares an update on the Presidential Transition," +
     " an outline of some of his policy plans for the first 100 days, and his day one executive actions.",
-  views: "1,341,158",
+  views: '1,341,158',
   comments: [],
   thumbnail: "https://i.ytimg.com/vi/7xX_KaStFT8/hqdefault.jpg?custom=true&w=196&h=110&stc=true&jpg444=true&jpgq=90&sp=68&sigh=sSuKCtqF5viHrZPjm2RfTsPvqNs",
   embed: 'https://www.youtube.com/embed/7xX_KaStFT8?autoplay=1'
@@ -159,6 +159,14 @@ function hide(target) {
 }
 
 
+// Filter videos based on the filter provided by the user
+function filterVideos(filter) {
+  var query = document.getElementById('searchbar').value.trim();
+  var $videoBlock = document.querySelector('#videos #videoblock');
+  var $allVideos = $videoBlock.getElementsByClassName('videodetails');
+}
+
+
 // Return an array of matched video objects based on user query.
 function findMatch(query) {
   var videoList = [], videoScores = [];
@@ -246,7 +254,7 @@ function buildVideoList(elements) {
 
   for (var index = 0; index < elements.length; index++) {
     var $videoDetails =
-      CE('div', {'id': 'videodetails'}, [
+      CE('div', {'class': 'videodetails', 'data-embed': elements[index].embed}, [
         CE('a', {'href': '#'}, [
           CE('img', {'class': 'videoimg', 'src': elements[index].thumbnail, 'data-embed': elements[index].embed}, [])
         ]),
@@ -277,9 +285,9 @@ function buildFilter($element) {
 
   var $filterOptions = CE('div', {'id': 'bottom-filter', 'class': 'hidden'}, [
     CE('div', {'class': 'option-block'}, [
-      CE('span', {'class': 'option'}, ['Relevance']),
-      CE('span', {'class': 'option'}, ['View Count']),
-      CE('span', {'class': 'option'}, ['Subscribed'])
+      CE('span', {'class': 'option toggle', 'data-opt': 0}, ['Relevance']),
+      CE('span', {'class': 'option', 'data-opt': 1}, ['View Count']),
+      CE('span', {'class': 'option', 'data-opt': 2}, ['Subscribed'])
     ])
   ]);
 
@@ -518,13 +526,14 @@ document.addEventListener('click', function(event) {
       hide($filter);
     }
   }
-  if ($target.className.includes('option')) {
+  if ($target.className.includes('option') && !$target.className.includes('toggle')) {
     var $options = $target.parentElement.getElementsByClassName('option');
     for (var index = 0; index < $options.length; index++) {
-      if ($options.item(index).className.includes('on')) {
-        $options.item(index).classList.remove('on');
+      if ($options.item(index).className.includes('toggle')) {
+        $options.item(index).classList.remove('toggle');
       }
     }
-    $target.classList.add('on');
+    $target.classList.add('toggle');
+    filterVideos($target.getAttribute('data-opt'));
   }
 });

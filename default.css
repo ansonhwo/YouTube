@@ -117,7 +117,7 @@ body {
   height: 30px;
 }
 
-#filterblock .option.on {
+#filterblock .toggle {
   border-bottom: 2px solid #e62117;
 }
 
@@ -149,7 +149,7 @@ body {
   width: 800px;
 }
 
-#videodetails {
+.videodetails {
   position: relative;
   margin-top: 15px;
   margin-bottom: 15px;
@@ -157,40 +157,40 @@ body {
   width: 100%;
 }
 
-#videodetails .videotitle,
-#videodetails .videochannel,
-#videodetails .videoviews,
-#videodetails .videodesc {
+.videodetails .videotitle,
+.videodetails .videochannel,
+.videodetails .videoviews,
+.videodetails .videodesc {
   position: absolute;
   padding-left: 29%;
 }
 
-#videodetails .videoimg {
+.videodetails .videoimg {
   z-index: 2;
   position: absolute;
   height: 120px;
   width: 220px;
 }
 
-#videodetails .videotitle {
+.videodetails .videotitle {
   font-size: 19px;
   font-weight: 400;
   top: -27px;
 }
 
-#videodetails .videochannel {
+.videodetails .videochannel {
   color: #595959;
   font-size: 14px;
   top: 10px;
 }
 
-#videodetails .videoviews {
+.videodetails .videoviews {
   color: #595959;
   font-size: 14px;
   top: 29px;
 }
 
-#videodetails .videodesc {
+.videodetails .videodesc {
   color: #595959;
   font-size: 14px;
   word-wrap: normal;
