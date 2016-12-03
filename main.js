@@ -161,24 +161,43 @@ function hide(target) {
 
 // Filter videos based on the filter provided by the user
 function filterVideos(filter) {
+  var $videos = document.getElementById('videos');
   var query = document.getElementById('searchbar').value.trim();
   var $videoBlock = document.querySelector('#videos #videoblock');
-  var $allVideos = $videoBlock.getElementsByClassName('videodetails');
 
-  /**for (var index = 0; index < $allVideos.length; index++) {
-    var $element = $allVideos[index];
-
+  if (filter === '0') {
+    // Display all possible videos (default behavior)
+    if (query) {
+      deleteChild($videoBlock);
+      var videoList = findMatch(query);
+      if (videoList.length > 0) {
+        buildVideoList(videoList);
+      }
+      else {
+        var $invalidSearch = CE('h2', {'id': 'invalidsearch'}, ['No results found for: ' + query + '.']);
+        deleteChild($videos);
+        $videos.appendChild($invalidSearch);
+      }
+    }
   }
+  else if (filter === '1') {
+    // Don't delete, re-sort by most views.
+    var $allVideos = $videoBlock.getElementsByClassName('videodetails');
 
-  if (filter === 0) {
+    /**for (var index = 0; index < $allVideos.length; index++) {
+      var $element = $allVideos[index];
 
+    }**/
   }
-  else if (filter === 1) {
+  else if (filter === '2') {
+    // Delete videos that the current user is not subscribed to.
+    var $allVideos = $videoBlock.getElementsByClassName('videodetails');
 
+    /**for (var index = 0; index < $allVideos.length; index++) {
+      var $element = $allVideos[index];
+
+    }**/
   }
-  else if (filter === 2) {
-
-  }**/
 }
 
 
@@ -263,7 +282,14 @@ function setScore(list, video, score) {
 // Builds video list with videos that match the user's search query
 function buildVideoList(elements) {
   var $videoList = document.getElementById('videos');
-  var $videoBlock = CE('div', {'id': 'videoblock'}, []);
+  var $exists = document.getElementById('videoblock');
+  var $videoBlock;
+  if (!$exists) {
+    $videoBlock = CE('div', {'id': 'videoblock'}, []);
+  }
+  else {
+    $videoBlock = $exists;
+  }
 
   $videoList.appendChild($videoBlock);
 
@@ -477,10 +503,7 @@ document.addEventListener('submit', function(event) {
   if (query.trim()) {
     query = query.trim();
     var videoList = findMatch(query);
-    var $videoBlock = CE('div', {'class': 'videoblock'}, []);
     var $videos = document.getElementById('videos');
-
-    $videos.appendChild($videoBlock);
 
     deleteChild($videos);
 
