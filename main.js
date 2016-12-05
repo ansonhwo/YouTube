@@ -166,14 +166,16 @@ function filterVideos(filter) {
   var $invalid = document.getElementById('invalidsearch');
   var query = document.getElementById('searchbar').value.trim();
   var $videoBlock = document.querySelector('#videos #videoblock');
+  var videoList;
+
+  if ($invalid) $invalid.remove();
 
   if (filter === '0') {
     // Display all possible videos (default behavior)
     if (query) {
-      var videoList = findMatch(query);
+      videoList = findMatch(query);
 
       if ($videoBlock) deleteChild($videoBlock);
-      if ($invalid) $invalid.remove();
 
       if (videoList.length > 0) {
         buildVideoList(videoList);
@@ -188,22 +190,31 @@ function filterVideos(filter) {
     }
   }
   else if (filter === '1') {
-    // Don't delete, re-sort by most views.
-    var $allVideos = $videoBlock.getElementsByClassName('videodetails');
-
-    /**for (var index = 0; index < $allVideos.length; index++) {
-      var $element = $allVideos[index];
-
-    }**/
+    var unsorted = [], sorted = [];
+    if ($videoBlock) {
+      var allVideos = $videoBlock.getElementsByClassName('videodetails');
+      console.log(allVideos);
+      for (var index = 0; index < allVideos.length; index++) {
+        var video = findVideo(allVideos[index].getAttribute('data-embed'));
+        var views = parseInt(videos[video].views.replace(/,/g, ''));
+        unsorted.push([video, views]);
+      }
+      deleteChild($videoBlock);
+    }
+    unsorted.sort(function (video1, video2) {
+      if (video1[1] < video2[1]) return 1;
+      else return 0;
+    });
+    for (var index = 0; index < unsorted.length; index++) {
+      sorted.push(videos[unsorted[index][0]]);
+    }
+    buildVideoList(sorted);
   }
   else if (filter === '2') {
     // Delete videos that the current user is not subscribed to.
-    var $allVideos = $videoBlock.getElementsByClassName('videodetails');
-
-    /**for (var index = 0; index < $allVideos.length; index++) {
-      var $element = $allVideos[index];
-
-    }**/
+    if ($videoBlock) {
+      var allVideos = $videoBlock.getElementsByClassName('videodetails');
+    }
   }
 }
 
@@ -354,6 +365,10 @@ function buildFilter($element) {
 
 // Builds the video viewing area containing video related details
 function buildViewingArea(embed) {
+  var $filter = document.getElementById('filter');
+  $filter.classList.add('hidden');
+  $filter.classList.remove('active');
+
   buildVideoArea(embed);
 
   buildVideoDetails(embed);
@@ -522,6 +537,8 @@ document.addEventListener('submit', function(event) {
     var $invalid = document.getElementById('invalidsearch');
 
     deleteChild($videos);
+    $filter.classList.add('active');
+    $filter.classList.remove('hidden');
     buildFilter($filter);
     if ($invalid) $invalid.remove();
 
@@ -536,27 +553,6 @@ document.addEventListener('submit', function(event) {
     }
   }
   else return;
-
-  /**
-  if (query) {
-    var videoList = findMatch(query);
-
-    if ($videoBlock) deleteChild($videoBlock);
-
-    if (videoList.length > 0) {
-      if ($invalid) $invalid.remove();
-      buildVideoList(videoList);
-    }
-    else {
-      var $invalidSearch = CE('h2', {'id': 'invalidsearch'}, ['No results found for: ' + query + '.']);
-      var $filterResults = document.querySelector('#filterblock .filter-results');
-      $filterResults.textContent = 'About 0 results';
-      deleteChild($videos);
-      $videos.appendChild($invalidSearch);
-    }
-  }
-  **/
-
 });
 
 
