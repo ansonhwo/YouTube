@@ -78,6 +78,63 @@ body {
   width: 22px;
 }
 
+#featureblock {
+  background-color: #fff;
+  border-style: solid;
+  border-color: #e2e2e2;
+  border-width: 1px;
+  padding-top: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-bottom: 0;
+  margin-left: auto;
+  margin-right: auto;
+  width: 834px;
+}
+
+#featureblock .header {
+  font-weight: 500;
+  font-size: 18px;
+  margin-left: 5px;
+}
+
+#featureblock .feature-list {
+  margin-top: 8px;
+  padding: 0;
+}
+
+#featureblock .col {
+  display: inline;
+}
+
+#featureblock .col-wrap {
+  display: inline-block;
+  vertical-align: top;
+  width: 196px;
+  margin-left: 6px;
+  margin-right: 6px;
+}
+
+#featureblock .videoimg {
+  width: 196px;
+  height: 110px;
+}
+
+#featureblock .videotitle {
+  font-weight: 400;
+  font-size: 16px;
+  word-wrap: normal;
+  overflow: hidden;
+  margin: 0;
+  line-height: 1em;
+  max-height: 2em;
+}
+
+#featureblock .videochannel,
+#featureblock .videoviews {
+  font-size: 14px;
+}
+
 #filterblock {
   background-color: #fff;
   border-style: solid;

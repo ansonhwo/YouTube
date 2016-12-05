@@ -116,6 +116,52 @@ var currentUser = 1;
 var CE = createElement;
 var query = '';
 
+buildFeatured();
+
+
+// Builds the featured videos area
+function buildFeatured() {
+  var featuredList = [];
+  var $featured = document.getElementById('featured');
+
+  var $featureBlock =
+    CE('div', {'id': 'featureblock'}, [
+      CE('div', {'class': 'feature-top'}, [
+        CE('div', {'class': 'header'}, ['Featured Videos'])
+      ])
+    ]);
+
+  var $featureBottom = CE('div', {'class': 'feature-bottom'}, []);
+  var $featureList = CE('ul', {'class': 'feature-list'}, []);
+
+  while (featuredList.length < 4) {
+    var random = Math.floor(Math.random() * videos.length);
+    if (!featuredList.includes(random)) featuredList.push(random);
+  }
+
+  for (var index = 0; index < featuredList.length; index++) {
+    var $featureCol =
+      CE('li', {'class': 'col'}, [
+        CE('div', {'class': 'col-wrap'}, [
+          CE('a', {'href': '#'}, [
+            CE('img', {'class': 'videoimg', 'src': videos[featuredList[index]].thumbnail, 'data-embed': videos[featuredList[index]].embed}, [])
+          ]),
+          CE('a', {'href': '#'}, [
+            CE('p', {'class': 'videotitle', 'data-embed': videos[featuredList[index]].embed}, [videos[featuredList[index]].title])
+          ]),
+          CE('div', {'class': 'videochannel'}, [videos[featuredList[index]].channel]),
+          CE('div', {'class': 'videoviews'}, [videos[featuredList[index]].views + ' views'])
+        ])
+      ]);
+
+    $featureList.appendChild($featureCol);
+  }
+  $featureBottom.appendChild($featureList);
+  $featureBlock.appendChild($featureBottom);
+  $featured.appendChild($featureBlock);
+}
+
+
 // Deletes all of the children associated with the provided element ID.
 function deleteChild(element) {
   while (element.hasChildNodes()) {
@@ -539,10 +585,13 @@ document.addEventListener('submit', function(event) {
   if (query) {
     var $videos = document.getElementById('videos');
     var $filter = document.getElementById('filter');
+    var $featured = document.getElementById('featured');
 
     buildFilter($filter);
     $filter.classList.add('active');
     $filter.classList.remove('hidden');
+    $featured.classList.add('hidden');
+    $featured.classList.remove('active');
 
     var $options = document.querySelector('#filterblock .option-block').getElementsByClassName('toggle')[0];
 
@@ -559,7 +608,11 @@ document.addEventListener('click', function(event) {
     event.preventDefault();
 
     var $videos = document.getElementById('videos');
+    var $featured = document.getElementById('featured');
     embedURL = $target.getAttribute('data-embed');
+
+    $featured.classList.add('hidden');
+    $featured.classList.remove('active');
 
     deleteChild($videos);
 
