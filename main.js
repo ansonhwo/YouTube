@@ -114,7 +114,7 @@ var users = [{
 }];
 var currentUser = 1;
 var CE = createElement;
-
+var query = '';
 
 // Deletes all of the children associated with the provided element ID.
 function deleteChild(element) {
@@ -164,13 +164,12 @@ function filterVideos(filter) {
   var $videos = document.getElementById('videos');
   var $filter = document.getElementById('filter');
   var $invalid = document.getElementById('invalidsearch');
-  var query = document.getElementById('searchbar').value.trim();
   var $videoBlock = document.querySelector('#videos #videoblock');
 
   if ($invalid) $invalid.remove();
 
   if (query) {
-    var videoList = findMatch(query);
+    var videoList = findMatch();
 
     if ($videoBlock) deleteChild($videoBlock);
     if (videoList.length <= 0) {
@@ -226,7 +225,7 @@ function filterVideos(filter) {
 
 
 // Return an array of matched video objects based on user query.
-function findMatch(query) {
+function findMatch() {
   var videoList = [], videoScores = [];
   var searchWords = query.split(' ');
   var channel, title, description, subscribed, score = 0;
@@ -535,7 +534,7 @@ document.addEventListener('submit', function(event) {
 
   event.preventDefault();
 
-  var query = document.getElementById('searchbar').value.trim();
+  query = document.getElementById('searchbar').value.trim();
 
   if (query) {
     var $videos = document.getElementById('videos');
