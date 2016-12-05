@@ -114,7 +114,7 @@ var users = [{
 }];
 var currentUser = 1;
 var CE = createElement;
-
+var query = '';
 
 // Deletes all of the children associated with the provided element ID.
 function deleteChild(element) {
@@ -143,8 +143,89 @@ function createElement(tagName, attributes, children) {
 }
 
 
+// Set a hidden object to active within a specified element
+function show(target) {
+  var $element = target.getElementsByClassName('hidden')[0];
+  $element.classList.add('active');
+  $element.classList.remove('hidden');
+}
+
+
+// Set an active object to hidden within a specified element
+function hide(target) {
+  var $element = target.getElementsByClassName('active')[0];
+  $element.classList.add('hidden');
+  $element.classList.remove('active');
+}
+
+
+// Filter videos based on the filter provided by the user
+function filterVideos(filter) {
+  var $videos = document.getElementById('videos');
+  var $filter = document.getElementById('filter');
+  var $invalid = document.getElementById('invalidsearch');
+  var $videoBlock = document.querySelector('#videos #videoblock');
+
+  if ($invalid) $invalid.remove();
+
+  if (query) {
+    var videoList = findMatch();
+
+    if ($videoBlock) deleteChild($videoBlock);
+    if (videoList.length <= 0) {
+      var $invalidSearch = CE('h2', {'id': 'invalidsearch'}, ['No results found for: ' + query + '.']);
+      var $filterResults = document.querySelector('#filterblock .filter-results');
+
+      deleteChild($videos);
+      $filterResults.textContent = 'About 0 results';
+      $filter.appendChild($invalidSearch);
+    }
+    else {
+      if (filter === '0') {
+        buildVideoList(videoList);
+      }
+      else if (filter === '1') {
+        var mostViews = [], sorted = [];
+
+        for (var index = 0; index < videoList.length; index++) {
+          var video = findVideo(videoList[index].embed);
+          var views = parseInt(videoList[index].views.replace(/,/g, ''));
+
+          sorted.push([video, views]);
+        }
+
+        sorted.sort(function (video1, video2) {
+          if (video1[1] < video2[1]) return 1;
+          else return 0;
+        });
+
+        for (var index = 0; index < sorted.length; index++) {
+          mostViews.push(videos[sorted[index][0]]);
+        }
+
+        buildVideoList(mostViews);
+      }
+      else if (filter === '2') {
+        var sorted = [];
+
+        for (var index = 0; index < videoList.length; index++) {
+          var video = findVideo(videoList[index].embed);
+          var sub = videoList[index].channel;
+
+          if (users[currentUser].subscribed.includes(sub)) {
+            sorted.push(videos[video]);
+          }
+        }
+
+        buildVideoList(sorted);
+      }
+    }
+  }
+}
+
+
 // Return an array of matched video objects based on user query.
-function findMatch(query) {
+function findMatch() {
   var videoList = [], videoScores = [];
   var searchWords = query.split(' ');
   var channel, title, description, subscribed, score = 0;
@@ -172,11 +253,11 @@ function findMatch(query) {
           }
           if (subscribed) {
             if (channel) score += 1000;
-            if (title) score += 20;
+            if (title) score += 200;
             if (description) score += 0.5;
           }
           else {
-            if (channel) score += 100;
+            if (channel) score += 30;
             if (title) score += 2;
             if (description) score += 0.1;
           }
@@ -224,13 +305,23 @@ function setScore(list, video, score) {
 // Builds video list with videos that match the user's search query
 function buildVideoList(elements) {
   var $videoList = document.getElementById('videos');
-  var $videoBlock = CE('div', {'id': 'videoblock'}, []);
+  var $filterResults = document.querySelector ('#filterblock .filter-results');
+  var $exists = document.getElementById('videoblock');
+  var $videoBlock;
 
+  if (!$exists) {
+    $videoBlock = CE('div', {'id': 'videoblock'}, []);
+  }
+  else {
+    $videoBlock = $exists;
+  }
+
+  $filterResults.textContent = 'About ' + elements.length + ' results';
   $videoList.appendChild($videoBlock);
 
   for (var index = 0; index < elements.length; index++) {
     var $videoDetails =
-      CE('div', {'id': 'videodetails'}, [
+      CE('div', {'class': 'videodetails', 'data-embed': elements[index].embed}, [
         CE('a', {'href': '#'}, [
           CE('img', {'class': 'videoimg', 'src': elements[index].thumbnail, 'data-embed': elements[index].embed}, [])
         ]),
@@ -246,8 +337,45 @@ function buildVideoList(elements) {
 }
 
 
+// Builds the filter selector area
+function buildFilter($element) {
+  var $exists = document.getElementById('filterblock');
+
+  if ($exists) return;
+  else {
+    var $filterBlock = CE('div', {'id': 'filterblock'}, []);
+
+    var $filter = CE('div', {'id': 'top-filter'}, [
+      CE('button', {'class': 'filter-button'}, [
+        CE('span', {'class': 'filter-text'}, ["Filters"]),
+        CE('span', {'class': 'filter-icon'}, [
+          CE('i', {'class': 'fa fa-caret-down filter', 'aria-hidden': 'true'}, [])
+        ])
+      ]),
+      CE('span', {'class': 'filter-results'}, [])
+    ]);
+
+    var $filterOptions = CE('div', {'id': 'bottom-filter', 'class': 'hidden'}, [
+      CE('div', {'class': 'option-block'}, [
+        CE('span', {'class': 'option toggle', 'data-opt': 0}, ['Relevance']),
+        CE('span', {'class': 'option', 'data-opt': 1}, ['Most Viewed']),
+        CE('span', {'class': 'option', 'data-opt': 2}, ['Subscribed'])
+      ])
+    ]);
+
+    $element.appendChild($filterBlock);
+    $filterBlock.appendChild($filter);
+    $filterBlock.appendChild($filterOptions);
+  }
+}
+
+
 // Builds the video viewing area containing video related details
 function buildViewingArea(embed) {
+  var $filter = document.getElementById('filter');
+  $filter.classList.add('hidden');
+  $filter.classList.remove('active');
+
   buildVideoArea(embed);
 
   buildVideoDetails(embed);
@@ -406,29 +534,21 @@ document.addEventListener('submit', function(event) {
 
   event.preventDefault();
 
-  var query = document.getElementById('searchbar').value;
+  query = document.getElementById('searchbar').value.trim();
 
-  if (query.trim()) {
-    query = query.trim();
-    var videoList = findMatch(query);
-    var $videoBlock = CE('div', {'class': 'videoblock'}, []);
+  if (query) {
     var $videos = document.getElementById('videos');
+    var $filter = document.getElementById('filter');
 
-    $videos.appendChild($videoBlock);
+    buildFilter($filter);
+    $filter.classList.add('active');
+    $filter.classList.remove('hidden');
+
+    var $options = document.querySelector('#filterblock .option-block').getElementsByClassName('toggle')[0];
 
     deleteChild($videos);
-
-    if (videoList.length > 0) {
-      buildVideoList(videoList);
-    }
-    else {
-      var $invalidSearch = CE('h2', {'id': 'invalidsearch'}, ['No results found for: ' + query + '.']);
-
-      $videos.appendChild($invalidSearch);
-    }
+    filterVideos($options.getAttribute('data-opt'));
   }
-  else return;
-
 });
 
 
@@ -464,5 +584,24 @@ document.addEventListener('click', function(event) {
       $target.textContent = '✓ Subscribed';
       users[currentUser].subscribed.push(channel);
     }
+  }
+  if ($target.className.includes('filter')) {
+    var $filter = document.getElementById('filterblock');
+    if ($filter.getElementsByClassName('hidden').length > 0) {
+      show($filter);
+    }
+    else {
+      hide($filter);
+    }
+  }
+  if ($target.className.includes('option') && !$target.className.includes('toggle')) {
+    var $options = $target.parentElement.getElementsByClassName('option');
+    for (var index = 0; index < $options.length; index++) {
+      if ($options.item(index).className.includes('toggle')) {
+        $options.item(index).classList.remove('toggle');
+      }
+    }
+    $target.classList.add('toggle');
+    filterVideos($target.getAttribute('data-opt'));
   }
 });
