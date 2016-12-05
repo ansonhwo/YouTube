@@ -162,14 +162,17 @@ function hide(target) {
 // Filter videos based on the filter provided by the user
 function filterVideos(filter) {
   var $videos = document.getElementById('videos');
+  var $filter = document.getElementById('filter');
   var query = document.getElementById('searchbar').value.trim();
   var $videoBlock = document.querySelector('#videos #videoblock');
 
   if (filter === '0') {
     // Display all possible videos (default behavior)
     if (query) {
-      deleteChild($videoBlock);
       var videoList = findMatch(query);
+
+      deleteChild($videoBlock);
+
       if (videoList.length > 0) {
         buildVideoList(videoList);
       }
@@ -313,28 +316,33 @@ function buildVideoList(elements) {
 
 // Builds the filter selector area
 function buildFilter($element) {
-  var $filterBlock = CE('div', {'id': 'filterblock'}, []);
+  var $exists = document.getElementById('filterblock');
+  if ($exists) return;
+  else {
+    var $filterBlock = CE('div', {'id': 'filterblock'}, []);
 
-  var $filter = CE('div', {'id': 'top-filter'}, [
-    CE('button', {'id': 'filter'}, [
-      CE('span', {'class': 'filter-text'}, ["Filters"]),
-      CE('span', {'class': 'filter-icon'}, [
-        CE('i', {'class': 'fa fa-caret-down filter', 'aria-hidden': 'true'}, [])
+    var $filter = CE('div', {'id': 'top-filter'}, [
+      CE('button', {'class': 'filter-button'}, [
+        CE('span', {'class': 'filter-text'}, ["Filters"]),
+        CE('span', {'class': 'filter-icon'}, [
+          CE('i', {'class': 'fa fa-caret-down filter', 'aria-hidden': 'true'}, [])
+        ])
+      ]),
+      CE('span', {'class': 'filter-query'}, [])
+    ]);
+
+    var $filterOptions = CE('div', {'id': 'bottom-filter', 'class': 'hidden'}, [
+      CE('div', {'class': 'option-block'}, [
+        CE('span', {'class': 'option toggle', 'data-opt': 0}, ['Relevance']),
+        CE('span', {'class': 'option', 'data-opt': 1}, ['Most Viewed']),
+        CE('span', {'class': 'option', 'data-opt': 2}, ['Subscribed'])
       ])
-    ])
-  ]);
+    ]);
 
-  var $filterOptions = CE('div', {'id': 'bottom-filter', 'class': 'hidden'}, [
-    CE('div', {'class': 'option-block'}, [
-      CE('span', {'class': 'option toggle', 'data-opt': 0}, ['Relevance']),
-      CE('span', {'class': 'option', 'data-opt': 1}, ['Most Viewed']),
-      CE('span', {'class': 'option', 'data-opt': 2}, ['Subscribed'])
-    ])
-  ]);
-
-  $element.appendChild($filterBlock);
-  $filterBlock.appendChild($filter);
-  $filterBlock.appendChild($filterOptions);
+    $element.appendChild($filterBlock);
+    $filterBlock.appendChild($filter);
+    $filterBlock.appendChild($filterOptions);
+  }
 }
 
 
@@ -504,11 +512,12 @@ document.addEventListener('submit', function(event) {
     query = query.trim();
     var videoList = findMatch(query);
     var $videos = document.getElementById('videos');
+    var $filter = document.getElementById('filter');
 
     deleteChild($videos);
+    buildFilter($filter);
 
     if (videoList.length > 0) {
-      buildFilter($videos);
       buildVideoList(videoList);
     }
     else {
@@ -555,7 +564,7 @@ document.addEventListener('click', function(event) {
       users[currentUser].subscribed.push(channel);
     }
   }
-  if ($target.id === 'filter' || $target.className.includes('filter')) {
+  if ($target.className.includes('filter')) {
     var $filter = document.getElementById('filterblock');
     if ($filter.getElementsByClassName('hidden').length > 0) {
       show($filter);
