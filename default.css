@@ -143,6 +143,10 @@ body {
   padding-bottom: 6px;
 }
 
+#bottom-filter {
+  margin-top: 5px;
+}
+
 #videoblock {
   background-color: #fff;
   border-style: solid;

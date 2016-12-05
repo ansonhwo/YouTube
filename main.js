@@ -166,54 +166,60 @@ function filterVideos(filter) {
   var $invalid = document.getElementById('invalidsearch');
   var query = document.getElementById('searchbar').value.trim();
   var $videoBlock = document.querySelector('#videos #videoblock');
-  var videoList;
 
   if ($invalid) $invalid.remove();
 
-  if (filter === '0') {
-    // Display all possible videos (default behavior)
-    if (query) {
-      videoList = findMatch(query);
+  if (query) {
+    var videoList = findMatch(query);
 
-      if ($videoBlock) deleteChild($videoBlock);
+    if ($videoBlock) deleteChild($videoBlock);
+    if (videoList.length <= 0) {
+      var $invalidSearch = CE('h2', {'id': 'invalidsearch'}, ['No results found for: ' + query + '.']);
+      var $filterResults = document.querySelector('#filterblock .filter-results');
 
-      if (videoList.length > 0) {
+      deleteChild($videos);
+      $filterResults.textContent = 'About 0 results';
+      $filter.appendChild($invalidSearch);
+    }
+    else {
+      if (filter === '0') {
         buildVideoList(videoList);
       }
-      else {
-        var $invalidSearch = CE('h2', {'id': 'invalidsearch'}, ['No results found for: ' + query + '.']);
-        var $filterResults = document.querySelector('#filterblock .filter-results');
-        $filterResults.textContent = 'About 0 results';
-        deleteChild($videos);
-        $filter.appendChild($invalidSearch);
+      else if (filter === '1') {
+        var mostViews = [], sorted = [];
+
+        for (var index = 0; index < videoList.length; index++) {
+          var video = findVideo(videoList[index].embed);
+          var views = parseInt(videoList[index].views.replace(/,/g, ''));
+
+          sorted.push([video, views]);
+        }
+
+        sorted.sort(function (video1, video2) {
+          if (video1[1] < video2[1]) return 1;
+          else return 0;
+        });
+
+        for (var index = 0; index < sorted.length; index++) {
+          mostViews.push(videos[sorted[index][0]]);
+        }
+
+        buildVideoList(mostViews);
       }
-    }
-  }
-  else if (filter === '1') {
-    var unsorted = [], sorted = [];
-    if ($videoBlock) {
-      var allVideos = $videoBlock.getElementsByClassName('videodetails');
-      console.log(allVideos);
-      for (var index = 0; index < allVideos.length; index++) {
-        var video = findVideo(allVideos[index].getAttribute('data-embed'));
-        var views = parseInt(videos[video].views.replace(/,/g, ''));
-        unsorted.push([video, views]);
+      else if (filter === '2') {
+        var sorted = [];
+
+        for (var index = 0; index < videoList.length; index++) {
+          var video = findVideo(videoList[index].embed);
+          var sub = videoList[index].channel;
+
+          if (users[currentUser].subscribed.includes(sub)) {
+            sorted.push(videos[video]);
+          }
+        }
+
+        buildVideoList(sorted);
       }
-      deleteChild($videoBlock);
-    }
-    unsorted.sort(function (video1, video2) {
-      if (video1[1] < video2[1]) return 1;
-      else return 0;
-    });
-    for (var index = 0; index < unsorted.length; index++) {
-      sorted.push(videos[unsorted[index][0]]);
-    }
-    buildVideoList(sorted);
-  }
-  else if (filter === '2') {
-    // Delete videos that the current user is not subscribed to.
-    if ($videoBlock) {
-      var allVideos = $videoBlock.getElementsByClassName('videodetails');
     }
   }
 }
@@ -527,32 +533,23 @@ document.addEventListener('submit', function(event) {
 
   event.preventDefault();
 
-  var query = document.getElementById('searchbar').value;
+  var query = document.getElementById('searchbar').value.trim();
 
-  if (query.trim()) {
-    query = query.trim();
-    var videoList = findMatch(query);
+  if (query) {
     var $videos = document.getElementById('videos');
     var $filter = document.getElementById('filter');
-    var $invalid = document.getElementById('invalidsearch');
 
-    deleteChild($videos);
+    buildFilter($filter);
     $filter.classList.add('active');
     $filter.classList.remove('hidden');
-    buildFilter($filter);
-    if ($invalid) $invalid.remove();
 
-    if (videoList.length > 0) {
-      buildVideoList(videoList);
-    }
-    else {
-      var $invalidSearch = CE('h2', {'id': 'invalidsearch'}, ['No results found for: ' + query + '.']);
-      var $filterResults = document.querySelector('#filterblock .filter-results');
-      $filterResults.textContent = 'About 0 results';
-      $filter.appendChild($invalidSearch);
+    var $options = document.querySelector('#filterblock .option-block').getElementsByClassName('toggle')[0];
+    deleteChild($videos);
+
+    if ($options) {
+      filterVideos($options.getAttribute('data-opt'));
     }
   }
-  else return;
 });
 
 
