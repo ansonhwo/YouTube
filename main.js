@@ -5,7 +5,7 @@ var videos = [
   channelicon: "https://yt3.ggpht.com/-CmoaPOAkgk8/AAAAAAAAAAI/AAAAAAAAAAA/RCGcK9m4sHo/s48-c-k-no-mo-rj-c0xffffff/photo.jpg",
   description: "The President-elect shares an update on the Presidential Transition," +
     " an outline of some of his policy plans for the first 100 days, and his day one executive actions.",
-  views: '1,341,158',
+  views: "1,341,158",
   comments: [],
   thumbnail: "https://i.ytimg.com/vi/7xX_KaStFT8/hqdefault.jpg?custom=true&w=196&h=110&stc=true&jpg444=true&jpgq=90&sp=68&sigh=sSuKCtqF5viHrZPjm2RfTsPvqNs",
   embed: 'https://www.youtube.com/embed/7xX_KaStFT8?autoplay=1'
@@ -309,6 +309,7 @@ function buildVideoList(elements) {
   var $filterResults = document.querySelector ('#filterblock .filter-results');
   var $exists = document.getElementById('videoblock');
   var $videoBlock;
+
   if (!$exists) {
     $videoBlock = CE('div', {'id': 'videoblock'}, []);
   }
@@ -340,6 +341,7 @@ function buildVideoList(elements) {
 // Builds the filter selector area
 function buildFilter($element) {
   var $exists = document.getElementById('filterblock');
+
   if ($exists) return;
   else {
     var $filterBlock = CE('div', {'id': 'filterblock'}, []);
@@ -544,11 +546,9 @@ document.addEventListener('submit', function(event) {
     $filter.classList.remove('hidden');
 
     var $options = document.querySelector('#filterblock .option-block').getElementsByClassName('toggle')[0];
-    deleteChild($videos);
 
-    if ($options) {
-      filterVideos($options.getAttribute('data-opt'));
-    }
+    deleteChild($videos);
+    filterVideos($options.getAttribute('data-opt'));
   }
 });
 
