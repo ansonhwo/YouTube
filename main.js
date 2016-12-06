@@ -127,7 +127,7 @@ function buildFeatured() {
   var $featureBlock =
     CE('div', {'id': 'featureblock'}, [
       CE('div', {'class': 'feature-top'}, [
-        CE('div', {'class': 'header'}, ['Featured Videos'])
+        CE('div', {'class': 'header'}, ['Featured'])
       ])
     ]);
 
