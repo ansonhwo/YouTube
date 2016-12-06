@@ -6,6 +6,7 @@ var videos = [
   description: "The President-elect shares an update on the Presidential Transition," +
     " an outline of some of his policy plans for the first 100 days, and his day one executive actions.",
   views: "1,341,158",
+  categories: ["election", "trump"],
   comments: [],
   thumbnail: "https://i.ytimg.com/vi/7xX_KaStFT8/hqdefault.jpg?custom=true&w=196&h=110&stc=true&jpg444=true&jpgq=90&sp=68&sigh=sSuKCtqF5viHrZPjm2RfTsPvqNs",
   embed: 'https://www.youtube.com/embed/7xX_KaStFT8?autoplay=1'
@@ -20,6 +21,7 @@ var videos = [
     " an eager young race technician, Cruz Ramirez, with her own plan to win, plus inspiration from the late Fabulous" +
     " Hudson Hornet and a few unexpected turns.",
   views: "3,258,307",
+  categories: ["disney", "cars", "trailer"],
   comments: [],
   thumbnail: "https://i.ytimg.com/vi/E4K7JgPJ8-s/hqdefault.jpg?custom=true&w=196&h=110&stc=true&jpg444=true&jpgq=90&sp=68&sigh=DEWWRQJ38bHkSaBCT19c7Xeimnw",
   embed: 'https://www.youtube.com/embed/E4K7JgPJ8-s?autoplay=1'
@@ -31,6 +33,7 @@ var videos = [
   description: "It's time to flip some stuff!\nThanks to Fantasitc Gymnastics by Hasbro Gaming for sponsoring" +
     " this video! Go to http://bit.ly/FantasticGymnasticsDP to get Fantastic Gymnastics for yourself!",
   views: "4,460,870",
+  categories: ["flip", "cool", "action"],
   comments: [],
   thumbnail: "https://i.ytimg.com/vi/8YydogFXCPM/hqdefault.jpg?custom=true&w=196&h=110&stc=true&jpg444=true&jpgq=90&sp=68&sigh=MzABtab1-7LFj6m97B5xOS-lCgk",
   embed: 'https://www.youtube.com/embed/8YydogFXCPM?autoplay=1'
@@ -42,6 +45,7 @@ var videos = [
   description: "New from Billy on the Street! Watch Billy hit the street with SETH ROGEN in disguise, tell" +
     " people that Seth has died and get their reactions! We call this DEATH ROGEN. Watch full episodes of Billy on the Street Tuesdays at 10:30/9:30c on @TruTV!",
   views: "364,533",
+  categories: ["comedy"],
   comments: [],
   thumbnail: "https://i.ytimg.com/vi/A2R2iBc8udc/hqdefault.jpg?custom=true&w=168&h=94&stc=true&jpg444=true&jpgq=90&sp=68&sigh=j7ivnsDvrCl-ucJWKLoscivhtrs",
   embed: 'https://www.youtube.com/embed/diN92St7FA8?autoplay=1'
@@ -54,6 +58,7 @@ var videos = [
     " shockwave action!\nCheers to EA for sponsoring this video. Check out the game at http://www.battlefield.com\n" +
     "Follow Gav on Twitter - https://twitter.com/GavinFree\nFollow Dan on Twitter - https://twitter.com/DanielGruchy",
   views: "1,466,332",
+  categories: ["cool", "action"],
   comments: [],
   thumbnail: "https://i.ytimg.com/vi/ysB-SH19WRQ/hqdefault.jpg?custom=true&w=196&h=110&stc=true&jpg444=true&jpgq=90&sp=68&sigh=9OEQLS6JSWBMQ8sCrd0yZt58lJ8",
   embed: 'https://www.youtube.com/embed/ysB-SH19WRQ?autoplay=1'
@@ -66,6 +71,7 @@ var videos = [
     "NBC's The Voice follows the strongest vocalists from across the country and invites them to compete in" +
     " this season's blockbuster vocal competition.",
   views: "213,615",
+  categories: ["cool", "singing"],
   comments: [],
   thumbnail: "https://i.ytimg.com/vi/RswuJVHVw_0/hqdefault.jpg?custom=true&w=196&h=110&stc=true&jpg444=true&jpgq=90&sp=68&sigh=6lmdPt82bEpmKOw202Zi67Iwk7U",
   embed: 'https://www.youtube.com/embed/RswuJVHVw_0?autoplay=1'
@@ -76,6 +82,7 @@ var videos = [
   channelicon: "https://yt3.ggpht.com/-CmoaPOAkgk8/AAAAAAAAAAI/AAAAAAAAAAA/RCGcK9m4sHo/s48-c-k-no-mo-rj-c0xffffff/photo.jpg",
   description: "iPhone 8 & 8 Plus Rumors & Leaks Have Begun! New Features To Expect & Rumor Roundup With Sources!",
   views: "693,167",
+  categories: ["technology", "tech", "apple", "iphone"],
   comments: [],
   thumbnail: "https://i.ytimg.com/vi/MZqyfeUi7As/hqdefault.jpg?custom=true&w=196&h=110&stc=true&jpg444=true&jpgq=90&sp=68&sigh=HDgDRvuiwhCcMHXVT0Gm9eukqU8",
   embed: 'https://www.youtube.com/embed/MZqyfeUi7As?autoplay=1'
@@ -88,9 +95,34 @@ var videos = [
     " The Little Mermaid for the first time, and most of us are still heading to theatres whenever a new Pixar film comes out. But we don't always catch the Easter" +
     " eggs left there by mischievious animators, or the cameos that some Disney characters make in movies that aren't their own.",
   views: "260,853",
+  categories: ["disney", "cool"],
   comments: [],
   thumbnail: "https://i.ytimg.com/vi/KBTwUOsO4d0/hqdefault.jpg?custom=true&w=196&h=110&stc=true&jpg444=true&jpgq=90&sp=68&sigh=Ue_RmuQ0uggRmpbxvxQAiC-w060",
   embed: 'https://www.youtube.com/embed/KBTwUOsO4d0?autoplay=1'
+},
+{
+  title: "Disney Pixar Cars | The Die-cast Series Ep. 2 | Takes on the Washroom",
+  channel: "Disney-Pixar",
+  channelicon: "https://yt3.ggpht.com/-CmoaPOAkgk8/AAAAAAAAAAI/AAAAAAAAAAA/RCGcK9m4sHo/s48-c-k-no-mo-rj-c0xffffff/photo.jpg",
+  description: "Get ready to watch your favorite Disney Pixar Cars die-cast vehicles race to the finish in awesome real world environments. Tune " +
+    "in each week to see your favorite die-cast vehicles speed, drift and jump through new locations and crazy obstacles on their way to the finish line.",
+  views: "282,667",
+  categories: ["disney", "short", "cars"],
+  comments: [],
+  thumbnail: "https://i.ytimg.com/vi/-6rCTa9DBx0/hqdefault.jpg?custom=true&w=196&h=110&stc=true&jpg444=true&jpgq=90&sp=68&sigh=OFObaw7I2mU4ost9g3mmfN_Amd8",
+  embed: 'https://www.youtube.com/embed/-6rCTa9DBx0?autoplay=1'
+},
+{
+  title: "Apple - Introducing iPhone 7",
+  channel: "Apple",
+  channelicon: "https://yt3.ggpht.com/-CmoaPOAkgk8/AAAAAAAAAAI/AAAAAAAAAAA/RCGcK9m4sHo/s48-c-k-no-mo-rj-c0xffffff/photo.jpg",
+  description: "With new camera systems, stereo speakers, and the most powerful chip ever in a smartphone, iPhone 7 and iPhone 7 Plus make " +
+    "the things you do most even better. Two new finishes highlight the seamless design.",
+  views: "22,191,734",
+  categories: ["technology", "tech", "apple", "iphone"],
+  comments: [],
+  thumbnail: "https://i1.ytimg.com/vi/Q6dsRpVyyWs/hqdefault.jpg",
+  embed: 'https://www.youtube.com/embed/Q6dsRpVyyWs?autoplay=1'
 }];
 var users = [{
   name: "User1",
