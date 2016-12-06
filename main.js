@@ -604,6 +604,21 @@ document.addEventListener('submit', function(event) {
 document.addEventListener('click', function(event) {
   var $target = event.target;
   var embedURL;
+
+  if ($target.id === 'logo') {
+    var $videos = document.getElementById('videos');
+    var $featured = document.getElementById('featured');
+    var $filter = document.getElementById('filter');
+
+    $featured.classList.add('active');
+    $featured.classList.remove('hidden');
+    $filter.classList.add('hidden');
+    $filter.classList.remove('active');
+
+    deleteChild($videos);
+    deleteChild($featured);
+    buildFeatured();
+  }
   if ($target.className === 'videoimg' || $target.className === 'videotitle') {
     event.preventDefault();
 
