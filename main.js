@@ -168,6 +168,7 @@ function buildFeatured() {
 
   while (featuredList.length < 4) {
     var random = Math.floor(Math.random() * videos.length);
+
     if (!featuredList.includes(random)) featuredList.push(random);
   }
 
@@ -205,11 +206,14 @@ function deleteChild(element) {
 // Create elements with the given attributes & child nodes
 function createElement(tagName, attributes, children) {
   var element = document.createElement(tagName);
+
   for (var key in attributes) {
     element.setAttribute(key, attributes[key]);
   }
+
   for (var index = 0; index < children.length; index++) {
     var child = children[index];
+
     if (child instanceof Element) {
       element.appendChild(child);
     }
@@ -221,17 +225,15 @@ function createElement(tagName, attributes, children) {
 }
 
 
-// Set a hidden object to active within a specified element
-function show(target) {
-  var $element = target.getElementsByClassName('hidden')[0];
+// Set a hidden object to active
+function show($element) {
   $element.classList.add('active');
   $element.classList.remove('hidden');
 }
 
 
-// Set an active object to hidden within a specified element
-function hide(target) {
-  var $element = target.getElementsByClassName('active')[0];
+// Set an active object to hidden
+function hide($element) {
   $element.classList.add('hidden');
   $element.classList.remove('active');
 }
@@ -244,21 +246,29 @@ function filterVideos(filter) {
   var $invalid = document.getElementById('invalidsearch');
   var $videoBlock = document.querySelector('#videos #videoblock');
 
-  if ($invalid) $invalid.remove();
+  if ($invalid) hide($invalid);
 
   if (query) {
     var videoList = findMatch();
 
     if ($videoBlock) deleteChild($videoBlock);
     if (videoList.length <= 0) {
-      var $invalidSearch = CE('h2', {'id': 'invalidsearch'}, ['No results found for: ' + query + '.']);
+      if (!$invalid) {
+        var $invalidSearch = CE('h2', {'id': 'invalidsearch'}, ['No results found for: ' + query + '.']);
+
+        $filter.appendChild($invalidSearch);
+      }
+      else {
+        $invalid.textContent = 'No results found for: ' + query + '.';
+        show($invalid);
+      }
       var $filterResults = document.querySelector('#filterblock .filter-results');
 
-      deleteChild($videos);
+      hide($videos);
       $filterResults.textContent = 'About 0 results';
-      $filter.appendChild($invalidSearch);
     }
     else {
+      show($videos);
       if (filter === '0') {
         buildVideoList(videoList);
       }
@@ -318,8 +328,10 @@ function findMatch() {
         title = videos[video].title.toLowerCase().replace(/[^A-Za-z0-9\s]/g,'').includes(search);
         description = videos[video].description.toLowerCase().replace(/[^A-Za-z0-9\s]/g,'').includes(search);
         category = videos[video].categories.indexOf(search) > -1;
+
         if (channel || title || description || category) {
           score = getScore(videoScores, video);
+
           if (score < 0) {
             videoScores.push([video, 0]);
             score = 0;
@@ -362,6 +374,7 @@ function findMatch() {
 // Finds if a score already exists for a matched video
 function getScore(list, video) {
   var score = -1;
+
   for (var index = 0; index < list.length; index++) {
     if (list[index][0] === video) {
       score = list[index][1];
@@ -413,6 +426,7 @@ function buildVideoList(elements) {
         CE('p', {'class': 'videoviews'}, [elements[index].views + ' views']),
         CE('p', {'class': 'videodesc'}, [elements[index].description])
       ]);
+
     $videoBlock.appendChild($videoDetails);
   }
 }
@@ -453,17 +467,13 @@ function buildFilter($element) {
 
 // Builds the video viewing area containing video related details
 function buildViewingArea(embed) {
-  var $filter = document.getElementById('filter');
-  $filter.classList.add('hidden');
-  $filter.classList.remove('active');
-
-  buildVideoArea(embed);
-
-  buildVideoDetails(embed);
-
-  addCommentsArea();
-
   var index = findVideo(embed);
+  var $filter = document.getElementById('filter');
+
+  hide($filter);
+  buildVideoArea(embed);
+  buildVideoDetails(index);
+  addCommentsArea();
   userCommentsArea(index);
 }
 
@@ -472,21 +482,23 @@ function buildViewingArea(embed) {
 function buildVideoArea(embed) {
   var $videos = document.getElementById('videos');
   var $viewingArea = CE('div', {'id': 'viewingarea'}, []);
+
   $videos.appendChild($viewingArea);
 
   var $embed =
     CE('div', {'id': 'embed'}, [
       CE('iframe', {'id': 'uservideo', 'height': '480px', 'width': '854px', 'src': embed, 'frameborder': 0, 'allowfullscreen': ''}, [])
     ]);
+
   $viewingArea.appendChild($embed);
 }
 
 
 // Populate the Video Details section
-function buildVideoDetails(embed) {
+function buildVideoDetails(index) {
   var $videos = document.getElementById('videos');
-  var index = findVideo(embed);
   var subscribed = users[currentUser].subscribed.includes(videos[index].channel);
+
   var $channelbox =
       CE('div', {'id': 'channelbox'}, [
         CE('img', {'class': 'videoicon', 'src': videos[index].channelicon}, []),
@@ -495,10 +507,12 @@ function buildVideoDetails(embed) {
           CE('button', {'id': 'subscribe', 'class': subscribed ? 'yes' : 'no'}, [subscribed ? '✓ Subscribed' : 'Subscribe'])
         ])
       ]);
+
   var $titlebox =
     CE('div', {'id': 'titlebox'}, [
       CE('h2', {'class': 'title'}, [videos[index].title])
     ]);
+
   var $videoinfo =
     CE('div', {'id': 'videoinfo'}, [
       $titlebox, $channelbox,
@@ -513,10 +527,12 @@ function buildVideoDetails(embed) {
 // Populate the Add Comments section
 function addCommentsArea() {
   var $videos = document.getElementById('videos');
+
   var $author =
     CE('span', {'class': 'author'}, [
       CE('img', {'class': 'icon', 'src': users[currentUser].icon}, [])
     ]);
+
   var $commentWrap =
     CE('div', {'class': 'wrap'}, [
       CE('form', {'action': ''}, [
@@ -527,6 +543,7 @@ function addCommentsArea() {
         CE('button', {'class': 'cancelcomment'}, ['Cancel'])
       ])
     ]);
+
   var $addComments = CE('div', {'id': 'addcomments'}, [
     CE('h4', {'class': 'header'}, []),
     $author,
@@ -583,8 +600,10 @@ function populate(video, $element, numComments) {
 function addComment(video, user) {
   var $input = document.querySelector('#addcomments .input');
   var input = $input.value.trim();
+
   if (input) {
     var comment = new Comment(users[user].name, users[user].icon, 40, input);
+
     videos[video].comments.unshift(comment);
     $input.value = '';
     userCommentsArea(video);
@@ -623,10 +642,8 @@ document.addEventListener('submit', function(event) {
     var $featured = document.getElementById('featured');
 
     buildFilter($filter);
-    $filter.classList.add('active');
-    $filter.classList.remove('hidden');
-    $featured.classList.add('hidden');
-    $featured.classList.remove('active');
+    show($filter);
+    hide($featured);
 
     var $options = document.querySelector('#filterblock .option-block').getElementsByClassName('toggle')[0];
 
@@ -638,34 +655,28 @@ document.addEventListener('submit', function(event) {
 
 document.addEventListener('click', function(event) {
   var $target = event.target;
-  var embedURL;
+  var embedURL, $videos, $featured, $filter;
 
   if ($target.id === 'logo') {
-    var $videos = document.getElementById('videos');
-    var $featured = document.getElementById('featured');
-    var $filter = document.getElementById('filter');
+    $videos = document.getElementById('videos');
+    $featured = document.getElementById('featured');
+    $filter = document.getElementById('filter');
 
-    $featured.classList.add('active');
-    $featured.classList.remove('hidden');
-    $filter.classList.add('hidden');
-    $filter.classList.remove('active');
-
-    deleteChild($videos);
+    show($featured);
+    hide($filter);
+    hide($videos);
     deleteChild($featured);
     buildFeatured();
   }
   if ($target.className === 'videoimg' || $target.className === 'videotitle') {
     event.preventDefault();
 
-    var $videos = document.getElementById('videos');
-    var $featured = document.getElementById('featured');
+    $videos = document.getElementById('videos');
+    $featured = document.getElementById('featured');
     embedURL = $target.getAttribute('data-embed');
 
-    $featured.classList.add('hidden');
-    $featured.classList.remove('active');
-
+    hide($featured);
     deleteChild($videos);
-
     buildViewingArea(embedURL);
   }
   if ($target.className === 'submitcomment') {
@@ -677,7 +688,8 @@ document.addEventListener('click', function(event) {
   }
   if ($target.id === 'subscribe') {
     var channel = document.querySelector('#videoinfo .channelwrap .channel').textContent;
-    if($target.className === 'yes') {
+
+    if ($target.className === 'yes') {
       $target.setAttribute('class', 'no');
       $target.textContent = 'Subscribe';
       users[currentUser].subscribed.splice(users[currentUser].subscribed.indexOf(channel), 1);
@@ -689,16 +701,19 @@ document.addEventListener('click', function(event) {
     }
   }
   if ($target.className.includes('filter')) {
-    var $filter = document.getElementById('filterblock');
-    if ($filter.getElementsByClassName('hidden').length > 0) {
+    $filter = document.getElementById('filterblock').getElementsByClassName('hidden')[0];
+
+    if ($filter) {
       show($filter);
     }
     else {
+      $filter = document.getElementById('filterblock').getElementsByClassName('active')[0];
       hide($filter);
     }
   }
   if ($target.className.includes('option') && !$target.className.includes('toggle')) {
     var $options = $target.parentElement.getElementsByClassName('option');
+
     for (var index = 0; index < $options.length; index++) {
       if ($options.item(index).className.includes('toggle')) {
         $options.item(index).classList.remove('toggle');
