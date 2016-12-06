@@ -306,7 +306,7 @@ function filterVideos(filter) {
 function findMatch() {
   var videoList = [], videoScores = [];
   var searchWords = query.split(' ');
-  var channel, title, description, subscribed, score = 0;
+  var channel, title, description, subscribed, category, score = 0;
 
   for (var index = 0; index < searchWords.length; index++) {
     var search = searchWords[index].toLowerCase().replace(/[^A-Za-z0-9\s]/g,'');
@@ -317,7 +317,8 @@ function findMatch() {
         channel = videos[video].channel.toLowerCase().replace(/[^A-Za-z0-9\s]/g,'').includes(search);
         title = videos[video].title.toLowerCase().replace(/[^A-Za-z0-9\s]/g,'').includes(search);
         description = videos[video].description.toLowerCase().replace(/[^A-Za-z0-9\s]/g,'').includes(search);
-        if (channel || title || description) {
+        category = videos[video].categories.indexOf(search) > -1;
+        if (channel || title || description || category) {
           score = getScore(videoScores, video);
           if (score < 0) {
             videoScores.push([video, 0]);
@@ -332,11 +333,13 @@ function findMatch() {
           if (subscribed) {
             if (channel) score += 1000;
             if (title) score += 200;
+            if (category) score += 50;
             if (description) score += 0.5;
           }
           else {
             if (channel) score += 30;
             if (title) score += 2;
+            if (category) score += 1;
             if (description) score += 0.1;
           }
           setScore(videoScores, video, score);
