@@ -1,8 +1,8 @@
 body {
+  margin: 0;
   font-family: 'Roboto', sans-serif;
   font-weight: 300;
   background-color: #f1f1f1;
-  margin: 0;
 }
 
 .hidden {
@@ -21,13 +21,13 @@ body {
 }
 
 #header {
+  margin-bottom: 10px;
+  height: 52px;
+  width: 100%;
   background-color: #fff;
   border-bottom-style: solid;
   border-bottom-width: 1px;
   border-color: #e2e2e2;
-  margin-bottom: 10px;
-  height: 52px;
-  width: 100%;
 }
 
 #logo {
@@ -51,10 +51,10 @@ body {
 #searchbar {
   position: relative;
   bottom: 5px;
-  font-size: 16px;
   margin-top: 12px;
   height: 22px;
   width: 46vw;
+  font-size: 16px;
 }
 
 #searchbutton:hover {
@@ -63,15 +63,15 @@ body {
 }
 
 #searchbutton {
+  margin-left: -4px;
+  margin-top: 12px;
+  height: 28px;
+  width: 65px;
   background-color: #f8f8f8;
   outline: 0;
   border-style: solid;
   border-width: 1px;
   border-color: #e2e2e2;
-  margin-left: -4px;
-  margin-top: 12px;
-  height: 28px;
-  width: 65px;
 }
 
 #searchimg {
@@ -79,10 +79,6 @@ body {
 }
 
 #featureblock {
-  background-color: #fff;
-  border-style: solid;
-  border-color: #e2e2e2;
-  border-width: 1px;
   padding-top: 10px;
   padding-left: 10px;
   padding-right: 10px;
@@ -90,12 +86,16 @@ body {
   margin-left: auto;
   margin-right: auto;
   width: 834px;
+  background-color: #fff;
+  border-style: solid;
+  border-color: #e2e2e2;
+  border-width: 1px;
 }
 
 #featureblock .header {
+  margin-left: 5px;
   font-weight: 500;
   font-size: 18px;
-  margin-left: 5px;
 }
 
 #featureblock .feature-list {
@@ -110,23 +110,23 @@ body {
 #featureblock .col-wrap {
   display: inline-block;
   vertical-align: top;
-  width: 196px;
   margin-left: 6px;
   margin-right: 6px;
+  width: 196px;
 }
 
 #featureblock .videoimg {
-  width: 196px;
   height: 110px;
+  width: 196px;
 }
 
 #featureblock .videotitle {
+  margin-top: 0;
+  margin-bottom: 2px;
   font-weight: 400;
   font-size: 16px;
   word-wrap: normal;
   overflow: hidden;
-  margin-top: 0;
-  margin-bottom: 2px;
   line-height: 1em;
   max-height: 2em;
 }
@@ -137,14 +137,14 @@ body {
 }
 
 #filterblock {
-  background-color: #fff;
-  border-style: solid;
-  border-width: 1px;
-  border-color: #e2e2e2;
   margin-left: auto;
   margin-right: auto;
   margin-bottom: 0;
   width: 830px;
+  background-color: #fff;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #e2e2e2;
 }
 
 #filterblock .filter-button:hover {
@@ -156,23 +156,23 @@ body {
 }
 
 #filterblock .filter-button {
+  width: 60px;
+  margin-top: 9px;
+  margin-left: 15px;
+  margin-bottom: 9px;
   background-color: #e9e9e9;
   border-color: #c6c6c6;
   border-radius: 3px;
   border-width: 1px;
   outline: 0;
-  width: 60px;
-  margin-top: 9px;
-  margin-left: 15px;
-  margin-bottom: 9px;
 }
 
 #filterblock .filter-results {
   float: right;
-  font-weight: 300;
-  font-size: 15px;
   margin-top: 10px;
   margin-right: 10px;
+  font-weight: 300;
+  font-size: 15px;
 }
 
 #filterblock .filter-icon {
@@ -193,12 +193,12 @@ body {
 }
 
 #filterblock .option {
-  font-weight: 500;
-  font-size: 20px;
   padding-top: 6px;
   padding-left: 10.55%;
   padding-right: 10.54%;
   padding-bottom: 6px;
+  font-weight: 500;
+  font-size: 20px;
 }
 
 #bottom-filter {
@@ -206,10 +206,6 @@ body {
 }
 
 #videoblock {
-  background-color: #fff;
-  border-style: solid;
-  border-width: 1px;
-  border-color: #e2e2e2;
   margin-left: auto;
   margin-right: auto;
   margin-bottom: 20px;
@@ -217,6 +213,10 @@ body {
   padding-right: 15px;
   height: auto;
   width: 800px;
+  background-color: #fff;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #e2e2e2;
 }
 
 .videodetails {
@@ -236,49 +236,46 @@ body {
 }
 
 .videodetails .videoimg {
-  z-index: 2;
   position: absolute;
+  z-index: 2;
   height: 120px;
   width: 220px;
 }
 
 .videodetails .videotitle {
-  font-size: 19px;
-  font-weight: 400;
   top: -27px;
   overflow: hidden;
+  font-size: 19px;
+  font-weight: 400;
   line-height: 1em;
   max-height: 1em;
 }
 
 .videodetails .videochannel {
+  top: 10px;
   color: #595959;
   font-size: 14px;
-  top: 10px;
 }
 
 .videodetails .videoviews {
+  top: 29px;
   color: #595959;
   font-size: 14px;
-  top: 29px;
 }
 
 .videodetails .videodesc {
+  top: 50px;
+  width: 550px;
+  line-height: 1em;
+  max-height: 3.1em;
   color: #595959;
   font-size: 14px;
   word-wrap: normal;
   overflow: hidden;
   text-overflow: ellipsis;
-  top: 50px;
-  width: 550px;
-  line-height: 1em;
-  max-height: 3.1em;
 }
 
 #invalidsearch {
-  background-color: #fff;
-  font-size: 15px;
-  text-align: center;
   border-style: solid;
   border-width: 1px;
   border-color: #e2e2e2;
@@ -289,15 +286,18 @@ body {
   padding-bottom: 10px;
   height: 20px;
   width: 830px;
+  background-color: #fff;
+  font-size: 15px;
+  text-align: center;
 }
 
 #viewingarea {
   position: relative;
-  background-color: #000;
   margin-top: -10px;
   margin-bottom: 10px;
   height: 480px;
   width: 100%;
+  background-color: #000;
 }
 
 #embed {
@@ -311,10 +311,6 @@ body {
 
 #videoinfo {
   position: relative;
-  background-color: #fff;
-  border-style: solid;
-  border-width: 1px;
-  border-color: #e2e2e2;
   margin-right: auto;
   margin-left: auto;
   margin-bottom: 10px;
@@ -325,13 +321,17 @@ body {
   height: auto;
   width: 75vw;
   min-width: 834px;
+  background-color: #fff;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #e2e2e2;
 }
 
 #videoinfo .title {
   margin: 0;
   padding-bottom: 10px;
-  font-weight: 500;
   width: 70%;
+  font-weight: 500;
 }
 
 #videoinfo .icon {
@@ -339,10 +339,10 @@ body {
 }
 
 #videoinfo .channel {
-  font-size: 16px;
-  font-weight: 400;
   margin: 0;
   width: 300px;
+  font-size: 16px;
+  font-weight: 400;
 }
 
 #videoinfo .channelwrap {
@@ -358,15 +358,15 @@ body {
 }
 
 #videoinfo #subscribe.no {
-  background-color: #e62117;
-  font-weight: 400;
-  outline: 0;
-  color: #fff;
   border-color: #e62117;
   border-radius: 2px;
   border-width: 1px;
   margin-top: 7px;
   width: 100px;
+  background-color: #e62117;
+  font-weight: 400;
+  outline: 0;
+  color: #fff;
 }
 
 #videoinfo #subscribe.yes:hover {
@@ -378,41 +378,37 @@ body {
 }
 
 #videoinfo #subscribe.yes {
-  background-color: #f8f8f8;
-  font-weight: 400;
-  outline: 0;
   border-color: #ccc;
   border-radius: 2px;
   border-width: 1px;
   margin-top: 7px;
   width: 100px;
+  background-color: #f8f8f8;
+  font-weight: 400;
+  outline: 0;
 }
 
 #videoinfo .views {
-  font-size: 22px;
-  text-align: right;
   margin-top: -25px;
   margin-bottom: -10px;
   width: 98%;
+  font-size: 22px;
+  text-align: right;
 }
 
 #videoinfo .desc {
-  font-size: 15px;
-  border-top-style: solid;
-  border-color: #e2e2e2;
-  border-width: 1px;
   margin-left: auto;
   margin-right: auto;
   padding-top: 10px;
   width: 100%;
+  font-size: 15px;
+  border-top-style: solid;
+  border-color: #e2e2e2;
+  border-width: 1px;
 }
 
 #addcomments {
   position: relative;
-  background-color: #fff;
-  border-style: solid;
-  border-width: 1px;
-  border-color: #e2e2e2;
   margin-left: auto;
   margin-right: auto;
   margin-bottom: 10px;
@@ -420,12 +416,16 @@ body {
   width: 75vw;
   min-width: 834px;
   height: 125px;
+  background-color: #fff;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #e2e2e2;
 }
 
 #addcomments .header {
-  font-size: 13px;
   margin-top: 0;
   margin-bottom: 12px;
+  font-size: 13px;
 }
 
 #addcomments .author,
@@ -441,11 +441,11 @@ body {
 }
 
 #addcomments .input {
-  outline-width: thin;
   resize: none;
-  font-size: 14px;
   width: 100%;
   height: 40px;
+  font-size: 14px;
+  outline-width: thin;
 }
 
 #addcomments .buttonwrap {
@@ -468,19 +468,22 @@ body {
 
 #addcomments .cancelcomment {
   float: right;
-  background-color: #f8f8f8;
   outline: 0;
+  margin-right: 10px;
+  height: 35px;
+  width: 80px;
+  background-color: #f8f8f8;
   font-size: 11px;
   border-style: solid;
   border-radius: 3px;
   border-width: 1px;
-  margin-right: 10px;
-  height: 35px;
-  width: 80px;
 }
 
 #addcomments .submitcomment {
   float: right;
+  margin-right: -7px;
+  height: 35px;
+  width: 80px;
   background-color: #167ac6;
   outline: 0;
   color: #fff;
@@ -488,16 +491,9 @@ body {
   border-style: solid;
   border-radius: 3px;
   border-width: 1px;
-  margin-right: -7px;
-  height: 35px;
-  width: 80px;
 }
 
 #usercomments {
-  background-color: #fff;
-  border-style: solid;
-  border-width: 1px;
-  border-color: #e2e2e2;
   margin-right: auto;
   margin-left: auto;
   margin-bottom: 15px;
@@ -507,6 +503,10 @@ body {
   padding-bottom: 10px;
   width: 75vw;
   height: auto;
+  background-color: #fff;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #e2e2e2;
 }
 
 #usercomments .wrap,
@@ -534,8 +534,8 @@ body {
 }
 
 #usercomments .user {
-  color: #128ee9;
-  font-size: 16px;
   margin: 0;
   width: 40%;
+  color: #128ee9;
+  font-size: 16px;
 }
