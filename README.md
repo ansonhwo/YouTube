@@ -11,5 +11,5 @@ A basic Javascript recreation of the popular video streaming website, YouTube.
 3. The user can select a search result filter. By default, the results are sorted by relevance. Other filters include: Most Viewed, and Subscribed videos.
 ![Search Results](/../screenshots/screenshots/Screen Shot 2016-12-07 at 10.08.45 AM.png?raw=true "Optional Title")
 
-4. When a user is viewing a video, that same user can also elect to post a comment related to the video that is currently being watched.
+4. When a user is viewing a video, that same user can also elect to post a comment related to the video that is currently being watched. A user can also choose to subscribe to a video. On the next video search, subscribed videos related to the search keywords will show up in the list of Subscribed videos.
 ![Search Results](/../screenshots/screenshots/Screen Shot 2016-12-07 at 10.09.21 AM.png?raw=true "Optional Title")
