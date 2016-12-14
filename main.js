@@ -1,14 +1,14 @@
 class Video {
-  constructor(params) {
-    this.title = params[0] || '';
-    this.channel = params[1] || '';
-    this.channelicon = params[2] || '';
-    this.description = params[3] || '';
-    this.views = params[4] || '';
-    this.categories = params[5] || '';
+  constructor([title, channel, channelicon, description, views, categories, thumbnail, embed]) {
+    this.title = title || '';
+    this.channel = channel || '';
+    this.channelicon = channelicon || '';
+    this.description = description || '';
+    this.views = views || '';
+    this.categories = categories || '';
     this.comments = [];
-    this.thumbnail = params[6] || '';
-    this.embed = params[7] || '';
+    this.thumbnail = thumbnail || '';
+    this.embed = embed || '';
   }
   addComment(index, comment) {
     this.comments.unshift(comment);
@@ -21,9 +21,9 @@ class Video {
 }
 
 class User {
-  constructor(params) {
-    this.name = params[0];
-    this.icon = params[1];
+  constructor([name, icon]) {
+    this.name = name || '';
+    this.icon = icon || '';
     this.subscribed = [];
   }
   addSubscribed(channel) {
@@ -38,7 +38,11 @@ class User {
   }
 }
 
-var videos = [];
+const videos = [];
+const users = [];
+const CE = createElement;
+var currentUser = 1;
+var query = '';
 
 videos.push(new Video([
   'A Message from President-Elect Donald J. Trump',
@@ -156,7 +160,6 @@ videos.push(new Video([
   'https://www.youtube.com/embed/Q6dsRpVyyWs?autoplay=1'
 ]));
 
-var users = [];
 users.push(new User([
   'User1',
   'http://simpleicon.com/wp-content/uploads/user1.png'
@@ -174,36 +177,31 @@ users.push(new User([
   'https://cdn0.iconfinder.com/data/icons/PRACTIKA/256/user.png'
 ]));
 
-var currentUser = 1;
-var CE = createElement;
-var query = '';
-
 buildFeatured();
-
 
 // Builds the featured videos area
 function buildFeatured() {
-  var featuredList = [];
-  var $featured = document.getElementById('featured');
+  let featuredList = [];
+  let $featured = document.getElementById('featured');
 
-  var $featureBlock =
+  let $featureBlock =
     CE('div', {'id': 'featureblock'}, [
       CE('div', {'class': 'feature-top'}, [
         CE('div', {'class': 'header'}, ['Featured'])
       ])
     ]);
 
-  var $featureBottom = CE('div', {'class': 'feature-bottom'}, []);
-  var $featureList = CE('ul', {'class': 'feature-list'}, []);
+  let $featureBottom = CE('div', {'class': 'feature-bottom'}, []);
+  let $featureList = CE('ul', {'class': 'feature-list'}, []);
 
   while (featuredList.length < 4) {
-    var random = Math.floor(Math.random() * videos.length);
+    let random = Math.floor(Math.random() * videos.length);
 
     if (!featuredList.includes(random)) featuredList.push(random);
   }
 
-  for (var index = 0; index < featuredList.length; index++) {
-    var $featureCol =
+  for (let index = 0; index < featuredList.length; index++) {
+    let $featureCol =
       CE('li', {'class': 'col'}, [
         CE('div', {'class': 'col-wrap'}, [
           CE('a', {'href': '#'}, [
@@ -224,7 +222,6 @@ function buildFeatured() {
   $featured.appendChild($featureBlock);
 }
 
-
 // Deletes all of the children associated with the provided element ID.
 function deleteChild(element) {
   while (element.hasChildNodes()) {
@@ -232,17 +229,16 @@ function deleteChild(element) {
   }
 }
 
-
 // Create elements with the given attributes & child nodes
 function createElement(tagName, attributes, children) {
-  var element = document.createElement(tagName);
+  let element = document.createElement(tagName);
 
-  for (var key in attributes) {
+  for (let key in attributes) {
     element.setAttribute(key, attributes[key]);
   }
 
-  for (var index = 0; index < children.length; index++) {
-    var child = children[index];
+  for (let index = 0; index < children.length; index++) {
+    let child = children[index];
 
     if (child instanceof Element) {
       element.appendChild(child);
@@ -254,13 +250,11 @@ function createElement(tagName, attributes, children) {
   return element;
 }
 
-
 // Set a hidden object to active
 function show($element) {
   $element.classList.add('active');
   $element.classList.remove('hidden');
 }
-
 
 // Set an active object to hidden
 function hide($element) {
@@ -268,23 +262,22 @@ function hide($element) {
   $element.classList.remove('active');
 }
 
-
 // Filter videos based on the filter provided by the user
 function filterVideos(filter) {
-  var $videos = document.getElementById('videos');
-  var $filter = document.getElementById('filter');
-  var $invalid = document.getElementById('invalidsearch');
-  var $videoBlock = document.querySelector('#videos #videoblock');
+  let $videos = document.getElementById('videos');
+  let $filter = document.getElementById('filter');
+  let $invalid = document.getElementById('invalidsearch');
+  let $videoBlock = document.querySelector('#videos #videoblock');
 
   if ($invalid) hide($invalid);
 
   if (query) {
-    var videoList = findMatch();
+    let videoList = findMatch();
 
     if ($videoBlock) deleteChild($videoBlock);
     if (videoList.length <= 0) {
       if (!$invalid) {
-        var $invalidSearch = CE('h2', {'id': 'invalidsearch'}, ['No results found for: ' + query + '.']);
+        let $invalidSearch = CE('h2', {'id': 'invalidsearch'}, ['No results found for: ' + query + '.']);
 
         $filter.appendChild($invalidSearch);
       }
@@ -292,7 +285,7 @@ function filterVideos(filter) {
         $invalid.textContent = 'No results found for: ' + query + '.';
         show($invalid);
       }
-      var $filterResults = document.querySelector('#filterblock .filter-results');
+      let $filterResults = document.querySelector('#filterblock .filter-results');
 
       hide($videos);
       $filterResults.textContent = 'About 0 results';
@@ -303,37 +296,27 @@ function filterVideos(filter) {
         buildVideoList(videoList);
       }
       else if (filter === '1') {
-        var mostViews = [], sorted = [];
+        let sorted =
+          videoList.map((_, index) => {
+            let video = findVideo(videoList[index].embed);
+            let views = parseInt(videoList[index].views.replace(/,/g, ''));
+            return [video, views];
+          })
+          .sort((video1, video2) => {
+            if (video1[1] < video2[1]) return 1;
+            else return 0;
+          });
 
-        for (var index = 0; index < videoList.length; index++) {
-          var video = findVideo(videoList[index].embed);
-          var views = parseInt(videoList[index].views.replace(/,/g, ''));
-
-          sorted.push([video, views]);
-        }
-
-        sorted.sort(function (video1, video2) {
-          if (video1[1] < video2[1]) return 1;
-          else return 0;
-        });
-
-        for (var index = 0; index < sorted.length; index++) {
-          mostViews.push(videos[sorted[index][0]]);
-        }
+        let mostViews = sorted.map((_, index) => videos[sorted[index][0]]);
 
         buildVideoList(mostViews);
       }
       else if (filter === '2') {
-        var sorted = [];
-
-        for (var index = 0; index < videoList.length; index++) {
-          var video = findVideo(videoList[index].embed);
-          var sub = videoList[index].channel;
-
-          if (users[currentUser].subscribed.includes(sub)) {
-            sorted.push(videos[video]);
-          }
-        }
+        let sorted =
+          videoList.filter((_, index) => {
+            let sub = videoList[index].channel;
+            return users[currentUser].subscribed.includes(sub);
+          });
 
         buildVideoList(sorted);
       }
@@ -341,18 +324,17 @@ function filterVideos(filter) {
   }
 }
 
-
 // Return an array of matched video objects based on user query.
 function findMatch() {
   var videoList = [], videoScores = [];
   var searchWords = query.split(' ');
   var channel, title, description, subscribed, category, score = 0;
 
-  for (var index = 0; index < searchWords.length; index++) {
+  for (let index = 0; index < searchWords.length; index++) {
     var search = searchWords[index].toLowerCase().replace(/[^A-Za-z0-9\s]/g,'');
 
     if (search) {
-      for (var video = 0; video < videos.length; video++) {
+      for (let video = 0; video < videos.length; video++) {
         subscribed = false;
         channel = videos[video].channel.toLowerCase().replace(/[^A-Za-z0-9\s]/g,'').includes(search);
         title = videos[video].title.toLowerCase().replace(/[^A-Za-z0-9\s]/g,'').includes(search);
@@ -366,7 +348,7 @@ function findMatch() {
             videoScores.push([video, 0]);
             score = 0;
           }
-          for (var sub = 0; sub < users[currentUser].subscribed.length; sub++) {
+          for (let sub = 0; sub < users[currentUser].subscribed.length; sub++) {
             if (users[currentUser].subscribed[sub] === videos[video].channel) {
               subscribed = true;
               break;
@@ -394,12 +376,11 @@ function findMatch() {
     else return 0;
   });
 
-  for (var index = 0; index < videoScores.length; index++) {
+  for (let index = 0; index < videoScores.length; index++) {
     videoList.push(videos[videoScores[index][0]]);
   }
   return videoList;
 }
-
 
 // Finds if a score already exists for a matched video
 function getScore(list, video) {
