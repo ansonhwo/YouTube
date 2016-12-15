@@ -1,3 +1,15 @@
+/******************************/
+// Globals
+/******************************/
+const videos = [];
+const users = [];
+const CE = createElement;
+let currentUser = 1;
+let query = '';
+
+/******************************/
+// Class Definitions
+/******************************/
 class Video {
   constructor([title, channel, channelicon, description, views, categories, thumbnail, embed]) {
     this.title = title || '';
@@ -10,12 +22,17 @@ class Video {
     this.thumbnail = thumbnail || '';
     this.embed = embed || '';
   }
-  addComment(index, comment) {
+  addComment(comment) {
     this.comments.unshift(comment);
   }
   addCategory(category) {
     if (!this.categories.includes(category)) {
       this.categories.push(category);
+    }
+  }
+  removeCategory(category) {
+    if (this.categories.includes(category)) {
+      this.categories.splice(category, 1);
     }
   }
 }
@@ -38,12 +55,9 @@ class User {
   }
 }
 
-const videos = [];
-const users = [];
-const CE = createElement;
-var currentUser = 1;
-var query = '';
-
+/******************************/
+// Building a database
+/******************************/
 videos.push(new Video([
   'A Message from President-Elect Donald J. Trump',
   'Transition 2017',
@@ -177,51 +191,469 @@ users.push(new User([
   'https://cdn0.iconfinder.com/data/icons/PRACTIKA/256/user.png'
 ]));
 
-buildFeatured();
+/******************************/
+// DOM Related Objects
+/******************************/
+// Display object for any elements on the homepage
+const frontPage = {
 
-// Builds the featured videos area
-function buildFeatured() {
-  let featuredList = [];
-  let $featured = document.getElementById('featured');
+  init: function() {
+    this.cacheDOM();
+    this.buildFeatured();
+  },
 
-  let $featureBlock =
-    CE('div', {'id': 'featureblock'}, [
-      CE('div', {'class': 'feature-top'}, [
-        CE('div', {'class': 'header'}, ['Featured'])
-      ])
-    ]);
+  cacheDOM: function() {
+    this.$featured = document.getElementById('featured');
+  },
 
-  let $featureBottom = CE('div', {'class': 'feature-bottom'}, []);
-  let $featureList = CE('ul', {'class': 'feature-list'}, []);
+  // Build the Featured videos display area
+  buildFeatured: function() {
+    const featuredList = [];
+    const $featureBlock =
+      CE('div', {'id': 'featureblock'}, [
+        CE('div', {'class': 'feature-top'}, [
+          CE('div', {'class': 'header'}, ['Featured'])
+        ])
+      ]);
+    const $featureBottom = CE('div', {'class': 'feature-bottom'}, []);
+    const $featureList = CE('ul', {'class': 'feature-list'}, []);
 
-  while (featuredList.length < 4) {
-    let random = Math.floor(Math.random() * videos.length);
+    // Build a list of four randomized video indexes
+    while (featuredList.length < 4) {
+      const random = Math.floor(Math.random() * videos.length);
+      if (!featuredList.includes(random)) featuredList.push(random);
+    }
 
-    if (!featuredList.includes(random)) featuredList.push(random);
+    // Add the video details of the four randomized videos
+    featuredList.map((index) => {
+      let $featureCol =
+        CE('li', {'class': 'col'}, [
+          CE('div', {'class': 'col-wrap'}, [
+            CE('a', {'href': '#'}, [
+              CE('img', {'class': 'videoimg', 'src': videos[index].thumbnail, 'data-embed': videos[index].embed}, [])
+            ]),
+            CE('a', {'href': '#'}, [
+              CE('p', {'class': 'videotitle', 'data-embed': videos[index].embed}, [videos[index].title])
+            ]),
+            CE('div', {'class': 'videochannel'}, [videos[index].channel]),
+            CE('div', {'class': 'videoviews'}, [videos[index].views + ' views'])
+          ])
+        ]);
+
+        $featureList.appendChild($featureCol);
+    });
+
+    $featureBottom.appendChild($featureList);
+    $featureBlock.appendChild($featureBottom);
+    this.$featured.appendChild($featureBlock);
   }
 
-  for (let index = 0; index < featuredList.length; index++) {
-    let $featureCol =
-      CE('li', {'class': 'col'}, [
-        CE('div', {'class': 'col-wrap'}, [
+};
+
+// Display object for populating relevant video search results
+const searchResults = {
+
+  init: function() {
+    this.cacheDOM();
+  },
+
+  cacheDOM: function() {
+    this.$videos = document.getElementById('videos');
+    this.$filter = document.getElementById('filter');
+  },
+
+  // Build video search results list
+  buildVideoList: function(elements) {
+    let $videoBlock;
+    const $filterResults = document.querySelector('#filterblock .filter-results');
+    const $exists = document.getElementById('videoblock');
+
+    // Check if the video results DOM object exists in memory already
+    if (!$exists) {
+      $videoBlock = CE('div', {'id': 'videoblock'}, []);
+    }
+    else {
+      $videoBlock = $exists;
+    }
+
+    // Append the video results display area
+    this.$videos.appendChild($videoBlock);
+
+    // Append # of results to results header
+    $filterResults.textContent = 'About ' + elements.length + ' results';
+
+    // Append all video elements to the search results area
+    elements.map((element) => {
+      let $videoDetails =
+        CE('div', {'class': 'videodetails', 'data-embed': element.embed}, [
           CE('a', {'href': '#'}, [
-            CE('img', {'class': 'videoimg', 'src': videos[featuredList[index]].thumbnail, 'data-embed': videos[featuredList[index]].embed}, [])
+            CE('img', {'class': 'videoimg', 'src': element.thumbnail, 'data-embed': element.embed}, [])
           ]),
-          CE('a', {'href': '#'}, [
-            CE('p', {'class': 'videotitle', 'data-embed': videos[featuredList[index]].embed}, [videos[featuredList[index]].title])
+            CE('a', {'href': '#'}, [
+              CE('h4', {'class': 'videotitle', 'data-embed': element.embed}, [element.title])
           ]),
-          CE('div', {'class': 'videochannel'}, [videos[featuredList[index]].channel]),
-          CE('div', {'class': 'videoviews'}, [videos[featuredList[index]].views + ' views'])
+          CE('p', {'class': 'videochannel'}, [element.channel]),
+          CE('p', {'class': 'videoviews'}, [element.views + ' views']),
+          CE('p', {'class': 'videodesc'}, [element.description])
+        ]);
+
+      $videoBlock.appendChild($videoDetails);
+    });
+  },
+
+  // Build the filter and it's associated filter options
+  buildFilter: function() {
+    const $exists = document.getElementById('filterblock');
+
+    // Check if the filter results DOM object exists in memory already
+    if ($exists) return;
+    else {
+      // Populate filter & filter options
+      const $filterBlock = CE('div', {'id': 'filterblock'}, []);
+
+      const $filter =
+        CE('div', {'id': 'top-filter'}, [
+          CE('button', {'class': 'filter-button'}, [
+            CE('span', {'class': 'filter-text'}, ["Filters"]),
+            CE('span', {'class': 'filter-icon'}, [
+              CE('i', {'class': 'fa fa-caret-down filter', 'aria-hidden': 'true'}, [])
+            ])
+          ]),
+          CE('span', {'class': 'filter-results'}, [])
+        ]);
+
+      const $filterOptions =
+        CE('div', {'id': 'bottom-filter', 'class': 'hidden'}, [
+          CE('div', {'class': 'option-block'}, [
+            CE('span', {'class': 'option toggle', 'data-opt': 0}, ['Relevance']),
+            CE('span', {'class': 'option', 'data-opt': 1}, ['Most Viewed']),
+            CE('span', {'class': 'option', 'data-opt': 2}, ['Subscribed'])
+          ])
+        ]);
+
+      this.$filter.appendChild($filterBlock);
+      $filterBlock.appendChild($filter);
+      $filterBlock.appendChild($filterOptions);
+    }
+  },
+
+  // Filter search results based on the selected results filter
+  filterVideos: function(option) {
+    const $invalid = document.getElementById('invalidsearch');
+    const $videoBlock = document.getElementById('videoblock');
+
+    // If the invalid search message element exists, hide it
+    if ($invalid) hide($invalid);
+
+    // Check that the user has previously entered a valid search
+    if (query) {
+      const videoList = this.findMatch();
+
+      // Ensure that the previous search results are cleared out
+      if ($videoBlock) deleteChild($videoBlock);
+
+      // Show invalid search message if there are no results
+      if (videoList.length <= 0) {
+        if (!$invalid) {
+          const $invalidSearch = CE('h2', {'id': 'invalidsearch'}, ['No results found for: ' + query + '.']);
+          this.$filter.appendChild($invalidSearch);
+        }
+        else {
+          $invalid.textContent = 'No results found for: ' + query + '.';
+          show($invalid);
+        }
+
+        const $filterResults = document.querySelector('#filterblock .filter-results');
+
+        hide(this.$videos);
+        $filterResults.textContent = 'About 0 results';
+      }
+      // Otherwise, search has some hits
+      else {
+        show(this.$videos);
+
+        // Relevance filter
+        if (option === '0') {
+          this.buildVideoList(videoList);
+        }
+        // Most Viewed filter
+        else if (option === '1') {
+          // Build a list of videos sorted from highest to lowest view count
+          const sorted =
+            videoList.map(video => {
+              let index = findVideo(video.embed);
+              let views = parseInt(video.views.replace(/,/g, ''));
+              return [index, views];
+            })
+            .sort((video1, video2) => {
+              if (video1[1] < video2[1]) return 1;
+              else return 0;
+            });
+
+          // Grab all the indexes of the resorted videos
+          const mostViews = sorted.map(video => videos[video[0]]);
+
+          // Redraw the video results list
+          this.buildVideoList(mostViews);
+        }
+        // Subscribed filter
+        else if (option === '2') {
+          // Find all of the videos that the user is currently subscribed to
+          const sorted = videoList.filter(video => users[currentUser].subscribed.includes(video.channel));
+
+          // Redraw the video results list
+          this.buildVideoList(sorted);
+        }
+      }
+    }
+  },
+
+  // Find videos in the database that match the search query
+  findMatch: function() {
+    const videoList = [];
+    const videoScores = [];
+    const searchWords = query.split(' ');
+    let channel, title, description, subscribed, category, score = 0;
+
+    // Check all of the space separated user search terms against the database
+    for (let index = 0; index < searchWords.length; index++) {
+      let search = searchWords[index].toLowerCase().replace(/[^A-Za-z0-9\s]/g,'');
+
+      // Ensure that the user input is valid
+      if (search) {
+        // Cycle through the video database and compare the search query against video properties
+        videos.map((video, index) => {
+          subscribed = false;
+          channel = video.channel.toLowerCase().replace(/[^A-Za-z0-9\s]/g,'').includes(search);
+          title = video.title.toLowerCase().replace(/[^A-Za-z0-9\s]/g,'').includes(search);
+          description = video.description.toLowerCase().replace(/[^A-Za-z0-9\s]/g,'').includes(search);
+          category = video.categories.indexOf(search) > -1;
+
+          // Check to see if the search query has at least 1 hit
+          if (channel || title || description || category) {
+            // Get the current relevance score of the video
+            score = this.getScore(videoScores, index);
+
+            // Check for pre-existing relevance scores
+            if (score < 0) {
+              videoScores.push([index, 0]);
+              score = 0;
+            }
+            // Check if the user is currently subscribed to the video
+            if (users[currentUser].subscribed.includes(video.channel)) subscribed = true;
+
+            // Subscribed videos should rank higher than non-subscribed videos
+            if (subscribed) {
+              if (channel) score += 1000;
+              if (title) score += 200;
+              if (category) score += 50;
+              if (description) score += 0.5;
+            }
+            else {
+              if (channel) score += 30;
+              if (title) score += 2;
+              if (category) score += 1;
+              if (description) score += 0.1;
+            }
+            // Update the relevance score for that video
+            this.setScore(videoScores, index, score);
+          }
+        });
+      }
+    }
+
+    // Sort videos from highest to lowest view count
+    videoScores.sort((video1, video2) => {
+      if (video1[1] < video2[1]) return 1;
+      else return 0;
+    })
+    .map(video => {
+      videoList.push(videos[video[0]]);
+    });
+
+    return videoList;
+
+  },
+
+  // Helper function to return the search score for the indexed video, if there is one
+  getScore: function(list, video) {
+    const score = list.filter(item => item[0] === video);
+
+    if (score.length > 0) return score[0][1];
+    else return -1;
+  },
+
+  // Helper function to update the search score for the indexed video
+  setScore: function(list, video, score) {
+    for (let index = 0; index < list.length; index++) {
+      if (list[index][0] === video) {
+        list[index][1] = score;
+        return;
+      }
+    }
+  },
+
+};
+
+// Display object for video player and associated user comments
+const videoPlayer = {
+
+  init: function() {
+    this.cacheDOM();
+  },
+
+  cacheDOM: function() {
+    this.$videos = document.getElementById('videos');
+    this.$filter = document.getElementById('filter');
+    this.$exists = document.getElementById('usercomments');
+    this.$commentHeader = document.querySelector('#addcomments .header');
+    this.$input = document.querySelector('#addcomments .input');
+  },
+
+  // Build the video viewing area
+  buildViewingArea: function(embed) {
+    const index = findVideo(embed);
+
+    hide(this.$filter);
+    this.buildVideoArea(embed);
+    this.buildVideoDetails(index);
+    this.buildCommentsArea();
+    this.buildUserComments(index);
+  },
+
+  // Helper function to build the embedded video display
+  buildVideoArea: function(embed) {
+    const $viewingArea = CE('div', {'id': 'viewingarea'}, []);
+
+    this.$videos.appendChild($viewingArea);
+
+    var $embed =
+      CE('div', {'id': 'embed'}, [
+        CE('iframe', {'id': 'uservideo', 'height': '480px', 'width': '854px', 'src': embed, 'frameborder': 0, 'allowfullscreen': ''}, [])
+      ]);
+
+    $viewingArea.appendChild($embed);
+  },
+
+  // Helper function to build the embedded video's associated details
+  buildVideoDetails: function(index) {
+    // Check to see if the user is subscribed to the current video
+    const subscribed = users[currentUser].subscribed.includes(videos[index].channel);
+
+    const $channelbox =
+        CE('div', {'id': 'channelbox'}, [
+          CE('img', {'class': 'videoicon', 'src': videos[index].channelicon}, []),
+          CE('div', {'class': 'channelwrap'}, [
+            CE('p', {'class': 'channel'}, [videos[index].channel]),
+            CE('button', {'id': 'subscribe', 'class': subscribed ? 'yes' : 'no'}, [subscribed ? '✓ Subscribed' : 'Subscribe'])
+          ])
+        ]);
+
+    const $titlebox =
+      CE('div', {'id': 'titlebox'}, [
+        CE('h2', {'class': 'title'}, [videos[index].title])
+      ]);
+
+    const $videoinfo =
+      CE('div', {'id': 'videoinfo'}, [
+        $titlebox, $channelbox,
+        CE('p', {'class': 'views'}, [videos[index].views + ' views']),
+        CE('p', {'class': 'desc'}, [videos[index].description])
+      ]);
+
+    this.$videos.appendChild($videoinfo);
+  },
+
+  // Helper function to build the Add Comments area
+  buildCommentsArea: function() {
+    const $author =
+      CE('span', {'class': 'author'}, [
+        CE('img', {'class': 'icon', 'src': users[currentUser].icon}, [])
+      ]);
+
+    const $commentWrap =
+      CE('div', {'class': 'wrap'}, [
+        CE('form', {'action': ''}, [
+          CE('textarea', {'class': 'input', 'type': 'text', 'placeholder': 'Add a public comment...', 'name': 'comment'}, [])
+        ]),
+        CE('div', {'class': 'buttonwrap'}, [
+          CE('button', {'class': 'submitcomment'}, ['Comment']),
+          CE('button', {'class': 'cancelcomment'}, ['Cancel'])
         ])
       ]);
 
-    $featureList.appendChild($featureCol);
-  }
-  $featureBottom.appendChild($featureList);
-  $featureBlock.appendChild($featureBottom);
-  $featured.appendChild($featureBlock);
-}
+    const $addComments =
+      CE('div', {'id': 'addcomments'}, [
+        CE('h4', {'class': 'header'}, []),
+        $author,
+        $commentWrap
+      ]);
 
+    this.$videos.appendChild($addComments);
+  },
+
+  // Helper function to build the User Comments area
+  buildUserComments: function(index) {
+    const numComments = videos[index].comments.length;
+    const $commentHeader = document.querySelector('#addcomments .header');
+
+    $commentHeader.textContent = 'COMMENTS • ' + numComments;
+
+    // Build comments area if there is at least one associated video comment
+    if (numComments > 0) {
+      const $exists = document.getElementById('usercomments');
+
+      // Check if the user comments area has already been built
+      if ($exists) {
+        deleteChild($exists);
+        this.populate(index, $exists, numComments);
+      }
+      else {
+        const $userComments = CE('div', {'id': 'usercomments'}, []);
+        this.$videos.appendChild($userComments);
+        this.populate(index, $userComments, numComments);
+      }
+    }
+  },
+
+  // Helper function to populate the User Comments section
+  populate: function(video, $element, numComments) {
+    for (let index = 0; index < numComments; index++) {
+      let $userComment =
+        CE('div', {'class': 'block'}, [
+          CE('span', {'class': 'author'}, [
+            CE('img', {'class': 'icon', 'src': videos[video].comments[index].icon}, [])
+          ]),
+          CE('div', {'class': 'wrap'}, [
+            CE('p', {'class': 'user'}, [videos[video].comments[index].user]),
+            CE('p', {'class': 'comment'}, [videos[video].comments[index].comment])
+          ])
+        ]);
+
+      $element.appendChild($userComment);
+    }
+  },
+
+  // Add comments to the user comments area
+  addComment: function(index) {
+    const $input = document.querySelector('#addcomments .input');
+    const input = $input.value.trim();
+
+    // Ensure that the user comment is valid
+    if (input) {
+      const comment = new Comment(users[currentUser].name, users[currentUser].icon, 40, input);
+
+      videos[index].comments.unshift(comment);
+      $input.value = '';
+      this.buildUserComments(index);
+    }
+  }
+
+};
+
+/******************************/
+// Helper Functions
+/******************************/
 // Deletes all of the children associated with the provided element ID.
 function deleteChild(element) {
   while (element.hasChildNodes()) {
@@ -262,366 +694,6 @@ function hide($element) {
   $element.classList.remove('active');
 }
 
-// Filter videos based on the filter provided by the user
-function filterVideos(filter) {
-  let $videos = document.getElementById('videos');
-  let $filter = document.getElementById('filter');
-  let $invalid = document.getElementById('invalidsearch');
-  let $videoBlock = document.querySelector('#videos #videoblock');
-
-  if ($invalid) hide($invalid);
-
-  if (query) {
-    let videoList = findMatch();
-
-    if ($videoBlock) deleteChild($videoBlock);
-    if (videoList.length <= 0) {
-      if (!$invalid) {
-        let $invalidSearch = CE('h2', {'id': 'invalidsearch'}, ['No results found for: ' + query + '.']);
-
-        $filter.appendChild($invalidSearch);
-      }
-      else {
-        $invalid.textContent = 'No results found for: ' + query + '.';
-        show($invalid);
-      }
-      let $filterResults = document.querySelector('#filterblock .filter-results');
-
-      hide($videos);
-      $filterResults.textContent = 'About 0 results';
-    }
-    else {
-      show($videos);
-      if (filter === '0') {
-        buildVideoList(videoList);
-      }
-      else if (filter === '1') {
-        let sorted =
-          videoList.map((_, index) => {
-            let video = findVideo(videoList[index].embed);
-            let views = parseInt(videoList[index].views.replace(/,/g, ''));
-            return [video, views];
-          })
-          .sort((video1, video2) => {
-            if (video1[1] < video2[1]) return 1;
-            else return 0;
-          });
-
-        let mostViews = sorted.map((_, index) => videos[sorted[index][0]]);
-
-        buildVideoList(mostViews);
-      }
-      else if (filter === '2') {
-        let sorted =
-          videoList.filter((_, index) => {
-            let sub = videoList[index].channel;
-            return users[currentUser].subscribed.includes(sub);
-          });
-
-        buildVideoList(sorted);
-      }
-    }
-  }
-}
-
-// Return an array of matched video objects based on user query.
-function findMatch() {
-  var videoList = [], videoScores = [];
-  var searchWords = query.split(' ');
-  var channel, title, description, subscribed, category, score = 0;
-
-  for (let index = 0; index < searchWords.length; index++) {
-    var search = searchWords[index].toLowerCase().replace(/[^A-Za-z0-9\s]/g,'');
-
-    if (search) {
-      for (let video = 0; video < videos.length; video++) {
-        subscribed = false;
-        channel = videos[video].channel.toLowerCase().replace(/[^A-Za-z0-9\s]/g,'').includes(search);
-        title = videos[video].title.toLowerCase().replace(/[^A-Za-z0-9\s]/g,'').includes(search);
-        description = videos[video].description.toLowerCase().replace(/[^A-Za-z0-9\s]/g,'').includes(search);
-        category = videos[video].categories.indexOf(search) > -1;
-
-        if (channel || title || description || category) {
-          score = getScore(videoScores, video);
-
-          if (score < 0) {
-            videoScores.push([video, 0]);
-            score = 0;
-          }
-          for (let sub = 0; sub < users[currentUser].subscribed.length; sub++) {
-            if (users[currentUser].subscribed[sub] === videos[video].channel) {
-              subscribed = true;
-              break;
-            }
-          }
-          if (subscribed) {
-            if (channel) score += 1000;
-            if (title) score += 200;
-            if (category) score += 50;
-            if (description) score += 0.5;
-          }
-          else {
-            if (channel) score += 30;
-            if (title) score += 2;
-            if (category) score += 1;
-            if (description) score += 0.1;
-          }
-          setScore(videoScores, video, score);
-        }
-      }
-    }
-  }
-  videoScores.sort(function (video1, video2) {
-    if (video1[1] < video2[1]) return 1;
-    else return 0;
-  });
-
-  for (let index = 0; index < videoScores.length; index++) {
-    videoList.push(videos[videoScores[index][0]]);
-  }
-  return videoList;
-}
-
-// Finds if a score already exists for a matched video
-function getScore(list, video) {
-  var score = -1;
-
-  for (var index = 0; index < list.length; index++) {
-    if (list[index][0] === video) {
-      score = list[index][1];
-      break;
-    }
-  }
-  return score;
-}
-
-
-// Updates the score for the specified video
-function setScore(list, video, score) {
-  for (var index = 0; index < list.length; index++) {
-    if (list[index][0] === video) {
-      list[index][1] = score;
-      break;
-    }
-  }
-}
-
-
-// Builds video list with videos that match the user's search query
-function buildVideoList(elements) {
-  var $videoList = document.getElementById('videos');
-  var $filterResults = document.querySelector ('#filterblock .filter-results');
-  var $exists = document.getElementById('videoblock');
-  var $videoBlock;
-
-  if (!$exists) {
-    $videoBlock = CE('div', {'id': 'videoblock'}, []);
-  }
-  else {
-    $videoBlock = $exists;
-  }
-
-  $filterResults.textContent = 'About ' + elements.length + ' results';
-  $videoList.appendChild($videoBlock);
-
-  for (var index = 0; index < elements.length; index++) {
-    var $videoDetails =
-      CE('div', {'class': 'videodetails', 'data-embed': elements[index].embed}, [
-        CE('a', {'href': '#'}, [
-          CE('img', {'class': 'videoimg', 'src': elements[index].thumbnail, 'data-embed': elements[index].embed}, [])
-        ]),
-        CE('a', {'href': '#'}, [
-          CE('h4', {'class': 'videotitle', 'data-embed': elements[index].embed}, [elements[index].title])
-        ]),
-        CE('p', {'class': 'videochannel'}, [elements[index].channel]),
-        CE('p', {'class': 'videoviews'}, [elements[index].views + ' views']),
-        CE('p', {'class': 'videodesc'}, [elements[index].description])
-      ]);
-
-    $videoBlock.appendChild($videoDetails);
-  }
-}
-
-
-// Builds the filter selector area
-function buildFilter($element) {
-  var $exists = document.getElementById('filterblock');
-
-  if ($exists) return;
-  else {
-    var $filterBlock = CE('div', {'id': 'filterblock'}, []);
-
-    var $filter = CE('div', {'id': 'top-filter'}, [
-      CE('button', {'class': 'filter-button'}, [
-        CE('span', {'class': 'filter-text'}, ["Filters"]),
-        CE('span', {'class': 'filter-icon'}, [
-          CE('i', {'class': 'fa fa-caret-down filter', 'aria-hidden': 'true'}, [])
-        ])
-      ]),
-      CE('span', {'class': 'filter-results'}, [])
-    ]);
-
-    var $filterOptions = CE('div', {'id': 'bottom-filter', 'class': 'hidden'}, [
-      CE('div', {'class': 'option-block'}, [
-        CE('span', {'class': 'option toggle', 'data-opt': 0}, ['Relevance']),
-        CE('span', {'class': 'option', 'data-opt': 1}, ['Most Viewed']),
-        CE('span', {'class': 'option', 'data-opt': 2}, ['Subscribed'])
-      ])
-    ]);
-
-    $element.appendChild($filterBlock);
-    $filterBlock.appendChild($filter);
-    $filterBlock.appendChild($filterOptions);
-  }
-}
-
-
-// Builds the video viewing area containing video related details
-function buildViewingArea(embed) {
-  var index = findVideo(embed);
-  var $filter = document.getElementById('filter');
-
-  hide($filter);
-  buildVideoArea(embed);
-  buildVideoDetails(index);
-  addCommentsArea();
-  userCommentsArea(index);
-}
-
-
-// Populate the Video Player area
-function buildVideoArea(embed) {
-  var $videos = document.getElementById('videos');
-  var $viewingArea = CE('div', {'id': 'viewingarea'}, []);
-
-  $videos.appendChild($viewingArea);
-
-  var $embed =
-    CE('div', {'id': 'embed'}, [
-      CE('iframe', {'id': 'uservideo', 'height': '480px', 'width': '854px', 'src': embed, 'frameborder': 0, 'allowfullscreen': ''}, [])
-    ]);
-
-  $viewingArea.appendChild($embed);
-}
-
-
-// Populate the Video Details section
-function buildVideoDetails(index) {
-  var $videos = document.getElementById('videos');
-  var subscribed = users[currentUser].subscribed.includes(videos[index].channel);
-
-  var $channelbox =
-      CE('div', {'id': 'channelbox'}, [
-        CE('img', {'class': 'videoicon', 'src': videos[index].channelicon}, []),
-        CE('div', {'class': 'channelwrap'}, [
-          CE('p', {'class': 'channel'}, [videos[index].channel]),
-          CE('button', {'id': 'subscribe', 'class': subscribed ? 'yes' : 'no'}, [subscribed ? '✓ Subscribed' : 'Subscribe'])
-        ])
-      ]);
-
-  var $titlebox =
-    CE('div', {'id': 'titlebox'}, [
-      CE('h2', {'class': 'title'}, [videos[index].title])
-    ]);
-
-  var $videoinfo =
-    CE('div', {'id': 'videoinfo'}, [
-      $titlebox, $channelbox,
-      CE('p', {'class': 'views'}, [videos[index].views + ' views']),
-      CE('p', {'class': 'desc'}, [videos[index].description])
-  ]);
-
-  $videos.appendChild($videoinfo);
-}
-
-
-// Populate the Add Comments section
-function addCommentsArea() {
-  var $videos = document.getElementById('videos');
-
-  var $author =
-    CE('span', {'class': 'author'}, [
-      CE('img', {'class': 'icon', 'src': users[currentUser].icon}, [])
-    ]);
-
-  var $commentWrap =
-    CE('div', {'class': 'wrap'}, [
-      CE('form', {'action': ''}, [
-        CE('textarea', {'class': 'input', 'type': 'text', 'placeholder': 'Add a public comment...', 'name': 'comment'}, [])
-      ]),
-      CE('div', {'class': 'buttonwrap'}, [
-        CE('button', {'class': 'submitcomment'}, ['Comment']),
-        CE('button', {'class': 'cancelcomment'}, ['Cancel'])
-      ])
-    ]);
-
-  var $addComments = CE('div', {'id': 'addcomments'}, [
-    CE('h4', {'class': 'header'}, []),
-    $author,
-    $commentWrap
-  ]);
-
-  $videos.appendChild($addComments);
-}
-
-
-// Populate the User Comments section
-function userCommentsArea(index) {
-  var $videos = document.getElementById('videos');
-  var $commentHeader = document.querySelector('#addcomments .header');
-  var numComments = videos[index].comments.length;
-
-  $commentHeader.textContent = 'COMMENTS • ' + numComments;
-
-  if (numComments > 0) {
-    var $exists = document.getElementById('usercomments');
-
-    if ($exists) {
-      deleteChild($exists);
-      populate(index, $exists, numComments);
-    }
-    else {
-      var $userComments = CE('div', {'id': 'usercomments'}, []);
-      $videos.appendChild($userComments);
-      populate(index, $userComments, numComments);
-    }
-  }
-}
-
-
-// Helper function that adds comments to user comment area
-function populate(video, $element, numComments) {
-  for (var index = 0; index < numComments; index++) {
-    var $userComment = CE('div', {'class': 'block'}, [
-      CE('span', {'class': 'author'}, [
-        CE('img', {'class': 'icon', 'src': videos[video].comments[index].icon}, [])
-      ]),
-      CE('div', {'class': 'wrap'}, [
-        CE('p', {'class': 'user'}, [videos[video].comments[index].user]),
-        CE('p', {'class': 'comment'}, [videos[video].comments[index].comment])
-      ])
-    ]);
-
-    $element.appendChild($userComment);
-  }
-}
-
-
-// Adds a new comment to the current video
-function addComment(video, user) {
-  var $input = document.querySelector('#addcomments .input');
-  var input = $input.value.trim();
-
-  if (input) {
-    var comment = new Comment(users[user].name, users[user].icon, 40, input);
-
-    videos[video].comments.unshift(comment);
-    $input.value = '';
-    userCommentsArea(video);
-  }
-}
-
-
 // Comment object constructor
 function Comment(user, icon, age, comment) {
   this.user = user;
@@ -630,8 +702,7 @@ function Comment(user, icon, age, comment) {
   this.comment = comment;
 }
 
-
-// Helper function that returns index of target video in video database
+// Returns index of target video in video database
 function findVideo(embed) {
   for (var index = 0; index < videos.length; index++) {
     if (videos[index].embed === embed) {
@@ -640,65 +711,77 @@ function findVideo(embed) {
   }
 }
 
-
-document.addEventListener('submit', function(event) {
+/******************************/
+// Event Listeners
+/******************************/
+// Search query submit event
+document.addEventListener('submit', event => {
 
   event.preventDefault();
 
   query = document.getElementById('searchbar').value.trim();
 
+  // Ensure that the search query is valid
   if (query) {
-    var $videos = document.getElementById('videos');
-    var $filter = document.getElementById('filter');
-    var $featured = document.getElementById('featured');
+    const $videos = document.getElementById('videos');
+    const $filter = document.getElementById('filter');
+    const $featured = document.getElementById('featured');
 
-    buildFilter($filter);
+    searchResults.buildFilter();
     show($filter);
     hide($featured);
 
-    var $options = document.querySelector('#filterblock .option-block').getElementsByClassName('toggle')[0];
+    const $options = document.querySelector('#filterblock .option-block').getElementsByClassName('toggle')[0];
 
     deleteChild($videos);
-    filterVideos($options.getAttribute('data-opt'));
+    searchResults.filterVideos($options.getAttribute('data-opt'));
   }
+
 }, true);
 
+// Global click event
+document.addEventListener('click', event => {
 
-document.addEventListener('click', function(event) {
-  var $target = event.target;
-  var embedURL, $videos, $featured, $filter;
+  const $target = event.target;
 
+  // User wants to navigate back to the homepage
   if ($target.id === 'logo') {
-    $videos = document.getElementById('videos');
-    $featured = document.getElementById('featured');
-    $filter = document.getElementById('filter');
+    const $videos = document.getElementById('videos');
+    const $filter = document.getElementById('filter');
+    const $featured = document.getElementById('featured');
 
     show($featured);
     hide($filter);
     hide($videos);
+    deleteChild($videos);
     deleteChild($featured);
-    buildFeatured();
+    frontPage.buildFeatured();
   }
+  // User wants to view a video
   if ($target.className === 'videoimg' || $target.className === 'videotitle') {
-    event.preventDefault();
+    const $featured = document.getElementById('featured');
+    const $videos = document.getElementById('videos');
+    const embedURL = $target.getAttribute('data-embed');
 
-    $videos = document.getElementById('videos');
-    $featured = document.getElementById('featured');
-    embedURL = $target.getAttribute('data-embed');
+    event.preventDefault();
 
     hide($featured);
     deleteChild($videos);
-    buildViewingArea(embedURL);
+    videoPlayer.buildViewingArea(embedURL);
+    show($videos);
   }
+  // User wants to submit a comment
   if ($target.className === 'submitcomment') {
-    embedURL = document.getElementById('uservideo').getAttribute('src');
-    addComment(findVideo(embedURL), currentUser);
+    const embedURL = document.getElementById('uservideo').getAttribute('src');
+    videoPlayer.addComment(findVideo(embedURL));
   }
+  // User wants to cancel a comment entry
   if ($target.className === 'cancelcomment') {
     document.querySelector('#addcomments .input').value = '';
   }
+  // User wants to subscribe to a video
   if ($target.id === 'subscribe') {
-    var channel = document.querySelector('#videoinfo .channelwrap .channel').textContent;
+    const channel = document.querySelector('#videoinfo .channel').textContent;
 
     if ($target.className === 'yes') {
       $target.setAttribute('class', 'no');
@@ -711,26 +794,33 @@ document.addEventListener('click', function(event) {
       users[currentUser].subscribed.push(channel);
     }
   }
+  // User wants to select from a number of search result filter options
   if ($target.className.includes('filter')) {
-    $filter = document.getElementById('filterblock').getElementsByClassName('hidden')[0];
+    let $filterBlock = document.getElementById('filterblock').getElementsByClassName('hidden')[0];
 
-    if ($filter) {
-      show($filter);
+    if ($filterBlock) {
+      show($filterBlock);
     }
     else {
-      $filter = document.getElementById('filterblock').getElementsByClassName('active')[0];
-      hide($filter);
+      $filterBlock = document.getElementById('filterblock').getElementsByClassName('active')[0];
+      hide($filterBlock);
     }
   }
+  // User wants to specify a search result filter
   if ($target.className.includes('option') && !$target.className.includes('toggle')) {
-    var $options = $target.parentElement.getElementsByClassName('option');
+    const $options = $target.parentElement.getElementsByClassName('option');
 
-    for (var index = 0; index < $options.length; index++) {
+    for (let index = 0; index < $options.length; index++) {
       if ($options.item(index).className.includes('toggle')) {
         $options.item(index).classList.remove('toggle');
       }
     }
     $target.classList.add('toggle');
-    filterVideos($target.getAttribute('data-opt'));
+    searchResults.filterVideos($target.getAttribute('data-opt'));
   }
+
 }, true);
+
+frontPage.init();
+searchResults.init();
+videoPlayer.init();
