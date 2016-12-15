@@ -311,23 +311,25 @@ const searchResults = {
       // Populate filter & filter options
       const $filterBlock = CE('div', {'id': 'filterblock'}, []);
 
-      const $filter = CE('div', {'id': 'top-filter'}, [
-        CE('button', {'class': 'filter-button'}, [
-          CE('span', {'class': 'filter-text'}, ["Filters"]),
-          CE('span', {'class': 'filter-icon'}, [
-            CE('i', {'class': 'fa fa-caret-down filter', 'aria-hidden': 'true'}, [])
-          ])
-        ]),
-        CE('span', {'class': 'filter-results'}, [])
-      ]);
+      const $filter =
+        CE('div', {'id': 'top-filter'}, [
+          CE('button', {'class': 'filter-button'}, [
+            CE('span', {'class': 'filter-text'}, ["Filters"]),
+            CE('span', {'class': 'filter-icon'}, [
+              CE('i', {'class': 'fa fa-caret-down filter', 'aria-hidden': 'true'}, [])
+            ])
+          ]),
+          CE('span', {'class': 'filter-results'}, [])
+        ]);
 
-      const $filterOptions = CE('div', {'id': 'bottom-filter', 'class': 'hidden'}, [
-        CE('div', {'class': 'option-block'}, [
-          CE('span', {'class': 'option toggle', 'data-opt': 0}, ['Relevance']),
-          CE('span', {'class': 'option', 'data-opt': 1}, ['Most Viewed']),
-          CE('span', {'class': 'option', 'data-opt': 2}, ['Subscribed'])
-        ])
-      ]);
+      const $filterOptions =
+        CE('div', {'id': 'bottom-filter', 'class': 'hidden'}, [
+          CE('div', {'class': 'option-block'}, [
+            CE('span', {'class': 'option toggle', 'data-opt': 0}, ['Relevance']),
+            CE('span', {'class': 'option', 'data-opt': 1}, ['Most Viewed']),
+            CE('span', {'class': 'option', 'data-opt': 2}, ['Subscribed'])
+          ])
+        ]);
 
       this.$filter.appendChild($filterBlock);
       $filterBlock.appendChild($filter);
@@ -561,7 +563,7 @@ const videoPlayer = {
         $titlebox, $channelbox,
         CE('p', {'class': 'views'}, [videos[index].views + ' views']),
         CE('p', {'class': 'desc'}, [videos[index].description])
-    ]);
+      ]);
 
     this.$videos.appendChild($videoinfo);
   },
@@ -584,11 +586,12 @@ const videoPlayer = {
         ])
       ]);
 
-    const $addComments = CE('div', {'id': 'addcomments'}, [
-      CE('h4', {'class': 'header'}, []),
-      $author,
-      $commentWrap
-    ]);
+    const $addComments =
+      CE('div', {'id': 'addcomments'}, [
+        CE('h4', {'class': 'header'}, []),
+        $author,
+        $commentWrap
+      ]);
 
     this.$videos.appendChild($addComments);
   },
@@ -743,13 +746,13 @@ document.addEventListener('submit', event => {
 // Global click event
 document.addEventListener('click', event => {
   const $target = event.target;
-  const $videos = document.getElementById('videos');
-  const $filter = document.getElementById('filter');
-  const $featured = document.getElementById('featured');
-  let embedURL;
 
   // User wants to navigate back to the homepage
   if ($target.id === 'logo') {
+    const $videos = document.getElementById('videos');
+    const $filter = document.getElementById('filter');
+    const $featured = document.getElementById('featured');
+
     show($featured);
     hide($filter);
     hide($videos);
@@ -758,9 +761,12 @@ document.addEventListener('click', event => {
   }
   // User wants to view a video
   if ($target.className === 'videoimg' || $target.className === 'videotitle') {
-    event.preventDefault();
+    const $featured = document.getElementById('featured');
+    const $videos = document.getElementById('videos');
+    const embedURL = $target.getAttribute('data-embed');
 
-    embedURL = $target.getAttribute('data-embed');
+
+    event.preventDefault();
 
     hide($featured);
     deleteChild($videos);
@@ -768,7 +774,7 @@ document.addEventListener('click', event => {
   }
   // User wants to submit a comment
   if ($target.className === 'submitcomment') {
-    embedURL = document.getElementById('uservideo').getAttribute('src');
+    const embedURL = document.getElementById('uservideo').getAttribute('src');
     videoPlayer.addComment(findVideo(embedURL));
   }
   // User wants to cancel a comment entry
@@ -777,7 +783,7 @@ document.addEventListener('click', event => {
   }
   // User wants to subscribe to a video
   if ($target.id === 'subscribe') {
-    var channel = document.querySelector('#videoinfo .channel').textContent;
+    const channel = document.querySelector('#videoinfo .channel').textContent;
 
     if ($target.className === 'yes') {
       $target.setAttribute('class', 'no');
@@ -804,9 +810,9 @@ document.addEventListener('click', event => {
   }
   // User wants to specify a search result filter
   if ($target.className.includes('option') && !$target.className.includes('toggle')) {
-    var $options = $target.parentElement.getElementsByClassName('option');
+    const $options = $target.parentElement.getElementsByClassName('option');
 
-    for (var index = 0; index < $options.length; index++) {
+    for (let index = 0; index < $options.length; index++) {
       if ($options.item(index).className.includes('toggle')) {
         $options.item(index).classList.remove('toggle');
       }
