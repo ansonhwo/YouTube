@@ -347,7 +347,7 @@ const searchResults = {
 
     // Check that the user has previously entered a valid search
     if (query) {
-      let videoList = this.findMatch();
+      const videoList = this.findMatch();
 
       // Ensure that the previous search results are cleared out
       if ($videoBlock) deleteChild($videoBlock);
@@ -440,12 +440,8 @@ const searchResults = {
               score = 0;
             }
             // Check if the user is currently subscribed to the video
-            for (let sub = 0; sub < users[currentUser].subscribed.length; sub++) {
-              if (users[currentUser].subscribed[sub] === video.channel) {
-                subscribed = true;
-                break;
-              }
-            }
+            if (users[currentUser].subscribed.includes(video.channel)) subscribed = true;
+
             // Subscribed videos should rank higher than non-subscribed videos
             if (subscribed) {
               if (channel) score += 1000;
@@ -481,10 +477,10 @@ const searchResults = {
 
   // Helper function to return the search score for the indexed video, if there is one
   getScore: function(list, video) {
-    for (let index = 0; index < list.length; index++) {
-      if (list[index][0] === video) return list[index][1];
-    }
-    return -1;
+    const score = list.filter(item => item[0] === video);
+
+    if (score.length > 0) return score[0][1];
+    else return -1;
   },
 
   // Helper function to update the search score for the indexed video
@@ -745,6 +741,7 @@ document.addEventListener('submit', event => {
 
 // Global click event
 document.addEventListener('click', event => {
+
   const $target = event.target;
 
   // User wants to navigate back to the homepage
@@ -820,6 +817,7 @@ document.addEventListener('click', event => {
     $target.classList.add('toggle');
     searchResults.filterVideos($target.getAttribute('data-opt'));
   }
+
 }, true);
 
 frontPage.init();
