@@ -195,7 +195,7 @@ users.push(new User([
 // DOM Related Objects
 /******************************/
 // Display object for any elements on the homepage
-const frontpage = {
+const frontPage = {
 
   init: function() {
     this.cacheDOM();
@@ -485,7 +485,7 @@ const searchResults = {
 };
 
 // Display object for video player and associated user comments
-var videoPlayer = {
+const videoPlayer = {
 
   init: function() {
     this.cacheDOM();
@@ -701,14 +701,14 @@ document.addEventListener('submit', event => {
     const $options = document.querySelector('#filterblock .option-block').getElementsByClassName('toggle')[0];
 
     deleteChild($videos);
-    filterVideos($options.getAttribute('data-opt'));
+    searchResults.filterVideos($options.getAttribute('data-opt'));
   }
 
 }, true);
 
 document.addEventListener('click', event => {
-  var $target = event.target;
-  var embedURL, $videos, $featured, $filter;
+  const $target = event.target;
+  const embedURL, $videos, $featured, $filter;
 
   if ($target.id === 'logo') {
     $videos = document.getElementById('videos');
