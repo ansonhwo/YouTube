@@ -753,6 +753,7 @@ document.addEventListener('click', event => {
     show($featured);
     hide($filter);
     hide($videos);
+    deleteChild($videos);
     deleteChild($featured);
     frontPage.buildFeatured();
   }
@@ -762,12 +763,12 @@ document.addEventListener('click', event => {
     const $videos = document.getElementById('videos');
     const embedURL = $target.getAttribute('data-embed');
 
-
     event.preventDefault();
 
     hide($featured);
     deleteChild($videos);
     videoPlayer.buildViewingArea(embedURL);
+    show($videos);
   }
   // User wants to submit a comment
   if ($target.className === 'submitcomment') {
