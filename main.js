@@ -206,6 +206,7 @@ const frontPage = {
     this.$featured = document.getElementById('featured');
   },
 
+  // Build the Featured videos display area
   buildFeatured: function() {
     const featuredList = [];
     const $featureBlock =
@@ -275,12 +276,13 @@ const searchResults = {
       $videoBlock = $exists;
     }
 
+    // Append the video results display area
     this.$videos.appendChild($videoBlock);
 
     // Append # of results to results header
     $filterResults.textContent = 'About ' + elements.length + ' results';
 
-    // Append all video elements to the search results page
+    // Append all video elements to the search results area
     elements.map((element) => {
       let $videoDetails =
         CE('div', {'class': 'videodetails', 'data-embed': element.embed}, [
@@ -333,6 +335,7 @@ const searchResults = {
     }
   },
 
+  // Filter search results based on the selected results filter
   filterVideos: function(option) {
     const $invalid = document.getElementById('invalidsearch');
     const $videoBlock = document.getElementById('videoblock');
@@ -385,8 +388,10 @@ const searchResults = {
               else return 0;
             });
 
+          // Grab all the indexes of the resorted videos
           const mostViews = sorted.map(video => videos[video[0]]);
 
+          // Redraw the video results list
           this.buildVideoList(mostViews);
         }
         // Subscribed filter
@@ -394,22 +399,27 @@ const searchResults = {
           // Find all of the videos that the user is currently subscribed to
           const sorted = videoList.filter(video => users[currentUser].subscribed.includes(video.channel));
 
+          // Redraw the video results list
           this.buildVideoList(sorted);
         }
       }
     }
   },
 
+  // Find videos in the database that match the search query
   findMatch: function() {
     const videoList = [];
     const videoScores = [];
     const searchWords = query.split(' ');
     let channel, title, description, subscribed, category, score = 0;
 
+    // Check all of the space separated user search terms against the database
     for (let index = 0; index < searchWords.length; index++) {
       let search = searchWords[index].toLowerCase().replace(/[^A-Za-z0-9\s]/g,'');
 
+      // Ensure that the user input is valid
       if (search) {
+        // Cycle through the video database and compare the search query against video properties
         videos.map((video, index) => {
           subscribed = false;
           channel = video.channel.toLowerCase().replace(/[^A-Za-z0-9\s]/g,'').includes(search);
@@ -417,19 +427,24 @@ const searchResults = {
           description = video.description.toLowerCase().replace(/[^A-Za-z0-9\s]/g,'').includes(search);
           category = video.categories.indexOf(search) > -1;
 
+          // Check to see if the search query has at least 1 hit
           if (channel || title || description || category) {
+            // Get the current relevance score of the video
             score = this.getScore(videoScores, index);
 
+            // Check for pre-existing relevance scores
             if (score < 0) {
               videoScores.push([index, 0]);
               score = 0;
             }
+            // Check if the user is currently subscribed to the video
             for (let sub = 0; sub < users[currentUser].subscribed.length; sub++) {
               if (users[currentUser].subscribed[sub] === video.channel) {
                 subscribed = true;
                 break;
               }
             }
+            // Subscribed videos should rank higher than non-subscribed videos
             if (subscribed) {
               if (channel) score += 1000;
               if (title) score += 200;
@@ -442,6 +457,7 @@ const searchResults = {
               if (category) score += 1;
               if (description) score += 0.1;
             }
+            // Update the relevance score for that video
             this.setScore(videoScores, index, score);
           }
         });
@@ -452,10 +468,8 @@ const searchResults = {
     videoScores.sort((video1, video2) => {
       if (video1[1] < video2[1]) return 1;
       else return 0;
-    });
-
-    // Append sorted video indexes to return array
-    videoScores.map(video => {
+    })
+    .map(video => {
       videoList.push(videos[video[0]]);
     });
 
@@ -466,9 +480,7 @@ const searchResults = {
   // Helper function to return the search score for the indexed video, if there is one
   getScore: function(list, video) {
     for (let index = 0; index < list.length; index++) {
-      if (list[index][0] === video) {
-        return list[index][1];
-      }
+      if (list[index][0] === video) return list[index][1];
     }
     return -1;
   },
@@ -500,6 +512,7 @@ const videoPlayer = {
     this.$input = document.querySelector('#addcomments .input');
   },
 
+  // Build the video viewing area
   buildViewingArea: function(embed) {
     const index = findVideo(embed);
 
@@ -526,6 +539,7 @@ const videoPlayer = {
 
   // Helper function to build the embedded video's associated details
   buildVideoDetails: function(index) {
+    // Check to see if the user is subscribed to the current video
     const subscribed = users[currentUser].subscribed.includes(videos[index].channel);
 
     const $channelbox =
@@ -590,6 +604,7 @@ const videoPlayer = {
     if (numComments > 0) {
       const $exists = document.getElementById('usercomments');
 
+      // Check if the user comments area has already been built
       if ($exists) {
         deleteChild($exists);
         this.populate(index, $exists, numComments);
@@ -625,6 +640,7 @@ const videoPlayer = {
     const $input = document.querySelector('#addcomments .input');
     const input = $input.value.trim();
 
+    // Ensure that the user comment is valid
     if (input) {
       const comment = new Comment(users[currentUser].name, users[currentUser].icon, 40, input);
 
@@ -699,12 +715,14 @@ function findVideo(embed) {
 /******************************/
 // Event Listeners
 /******************************/
+// Search query submit event
 document.addEventListener('submit', event => {
 
   event.preventDefault();
 
   query = document.getElementById('searchbar').value.trim();
 
+  // Ensure that the search query is valid
   if (query) {
     const $videos = document.getElementById('videos');
     const $filter = document.getElementById('filter');
@@ -722,6 +740,7 @@ document.addEventListener('submit', event => {
 
 }, true);
 
+// Global click event
 document.addEventListener('click', event => {
   const $target = event.target;
   const $videos = document.getElementById('videos');
@@ -729,6 +748,7 @@ document.addEventListener('click', event => {
   const $featured = document.getElementById('featured');
   let embedURL;
 
+  // User wants to navigate back to the homepage
   if ($target.id === 'logo') {
     show($featured);
     hide($filter);
@@ -736,6 +756,7 @@ document.addEventListener('click', event => {
     deleteChild($featured);
     frontPage.buildFeatured();
   }
+  // User wants to view a video
   if ($target.className === 'videoimg' || $target.className === 'videotitle') {
     event.preventDefault();
 
@@ -745,13 +766,16 @@ document.addEventListener('click', event => {
     deleteChild($videos);
     videoPlayer.buildViewingArea(embedURL);
   }
+  // User wants to submit a comment
   if ($target.className === 'submitcomment') {
     embedURL = document.getElementById('uservideo').getAttribute('src');
     videoPlayer.addComment(findVideo(embedURL));
   }
+  // User wants to cancel a comment entry
   if ($target.className === 'cancelcomment') {
     document.querySelector('#addcomments .input').value = '';
   }
+  // User wants to subscribe to a video
   if ($target.id === 'subscribe') {
     var channel = document.querySelector('#videoinfo .channel').textContent;
 
@@ -766,6 +790,7 @@ document.addEventListener('click', event => {
       users[currentUser].subscribed.push(channel);
     }
   }
+  // User wants to select from a number of search result filter options
   if ($target.className.includes('filter')) {
     let $filterBlock = document.getElementById('filterblock').getElementsByClassName('hidden')[0];
 
@@ -777,6 +802,7 @@ document.addEventListener('click', event => {
       hide($filterBlock);
     }
   }
+  // User wants to specify a search result filter
   if ($target.className.includes('option') && !$target.className.includes('toggle')) {
     var $options = $target.parentElement.getElementsByClassName('option');
 
