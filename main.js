@@ -508,6 +508,9 @@ const videoPlayer = {
     this.$exists = document.getElementById('usercomments');
     this.$commentHeader = document.querySelector('#addcomments .header');
     this.$input = document.querySelector('#addcomments .input');
+    this.$details = CE('div', {'id': 'videodetails'}, []);
+    this.$detailContainer = CE('div', {'class': 'detail-container'}, []);
+    this.$info = CE('div', {'id': 'info'}, []);
   },
 
   // Build the video viewing area
@@ -516,9 +519,13 @@ const videoPlayer = {
 
     hide(this.$filter);
     this.buildVideoArea(embed);
+    this.$videos.appendChild(this.$details);
+    this.$details.appendChild(this.$detailContainer);
+    this.$detailContainer.appendChild(this.$info);
     this.buildVideoDetails(index);
     this.buildCommentsArea();
     this.buildUserComments(index);
+    this.buildRelatedVideos();
   },
 
   // Helper function to build the embedded video display
@@ -561,7 +568,7 @@ const videoPlayer = {
         CE('p', {'class': 'desc'}, [videos[index].description])
       ]);
 
-    this.$videos.appendChild($videoinfo);
+    this.$info.appendChild($videoinfo);
   },
 
   // Helper function to build the Add Comments area
@@ -589,7 +596,7 @@ const videoPlayer = {
         $commentWrap
       ]);
 
-    this.$videos.appendChild($addComments);
+    this.$info.appendChild($addComments);
   },
 
   // Helper function to build the User Comments area
@@ -610,10 +617,19 @@ const videoPlayer = {
       }
       else {
         const $userComments = CE('div', {'id': 'usercomments'}, []);
-        this.$videos.appendChild($userComments);
+        this.$info.appendChild($userComments);
         this.populate(index, $userComments, numComments);
       }
     }
+  },
+
+  buildRelatedVideos: function() {
+    const $related =
+      CE('div', {'class': 'related'}, [
+
+      ]);
+
+    this.$detailContainer.appendChild($related);
   },
 
   // Helper function to populate the User Comments section
